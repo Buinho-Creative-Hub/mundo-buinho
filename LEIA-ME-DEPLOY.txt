@@ -1,0 +1,30 @@
+MUNDO BUINHO — deploy no Webtuga
+=================================
+
+Este zip NAO TEM pasta wrapper: a raiz do zip = a raiz do destino.
+Extrair directamente na pasta da Python App (ex. /home/<conta>/mundo-buinho/).
+
+Depois de extrair, "app.py" e "index.html" tem de estar na RAIZ dessa pasta.
+
+PASSOS (detalhe em DEPLOY.md):
+ 1. Criar o subdominio no cPanel PRIMEIRO
+ 2. Setup Python App -> Python 3.10+ (o default 2.7 NAO serve)
+ 3. Extrair este zip na raiz da pasta da app
+ 4. Configuration files: escrever "requirements.txt" + Enter -> Executar Pip Install
+ 5. (opcional) criar config_local.py com a chave do Mistral
+ 6. GRAVAR / RESTART
+ 7. Abrir https://<subdominio>/api/saude
+
+VERIFICAR QUE O DEPLOY PEGOU:
+No File Manager, correr este comando na pasta da app (Terminal) ou confirmar a data
+dos ficheiros. Se /api/saude devolver JSON com "ok": true, esta no ar.
+
+SEM A CHAVE DO MISTRAL O JOGO FUNCIONA na mesma - a mascote usa frases pre-escritas.
+E ate um bom primeiro teste: valida os jogos e o toque sem gastar nada.
+
+O QUE TESTAR NO TABLET (nunca foi validado em ecra real):
+ - Jogo 1 e 2: o dedo agarra e larga as pecas?
+ - Jogo 5: o traco segue o dedo sem a pagina fazer scroll?
+ - Mapa em landscape: os 5 niveis cabem?
+
+Buinho FabLab, Messejana - CC-BY-SA 4.0
