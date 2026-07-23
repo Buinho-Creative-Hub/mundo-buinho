@@ -1,0 +1,205 @@
+/* Mundo Buinho — núcleo
+   Buinho FabLab, Messejana · CC-BY-SA 4.0
+
+   Estado global, som, arrasto por toque, mascote e celebração.
+   Portado do protótipo Claude Design (runtime <sc-if>/<sc-for> não existe fora dela). */
+
+(function (global) {
+  'use strict';
+
+  // ---------------------------------------------------------------- estado
+  const estadoInicial = () => ({
+    ecra: 'home',
+    som: true,
+    mascote: { aberta: false, aCarregar: false, texto: '' },
+    celebracao: null,
+    g1: { doses: { agua: 0, agar: 0, glic: 0 } },
+    g2: { fase: 'ordem', slots: [null, null, null, null], pool: baralhar([0, 1, 2, 3]), ligados: {} },
+    g3: { idx: 0, errado: null, aResolver: false },
+    g4: { idx: 0, terminado: false },
+    g5: { desafioIdx: 0, cor: '#6B8F3E', espessura: 8 }
+  });
+
+  let S = estadoInicial();
+  const ouvintes = [];
+
+  function baralhar(a) {
+    const x = a.slice();
+    for (let i = x.length - 1; i > 0; i--) {
+      const j = (Math.random() * (i + 1)) | 0;
+      [x[i], x[j]] = [x[j], x[i]];
+    }
+    return x;
+  }
+
+  /** Actualiza estado. Aceita objecto ou função, como o setState do protótipo. */
+  function set(patch) {
+    const delta = typeof patch === 'function' ? patch(S) : patch;
+    S = Object.assign({}, S, delta);
+    ouvintes.forEach(f => f(S));
+  }
+
+  function estado() { return S; }
+  function aoMudar(f) { ouvintes.push(f); }
+  function reiniciar() { S = estadoInicial(); ouvintes.forEach(f => f(S)); }
+
+  // ------------------------------------------------------------------ som
+  let _ac = null;
+  function audio() {
+    if (!_ac) {
+      try { _ac = new (global.AudioContext || global.webkitAudioContext)(); }
+      catch (e) { _ac = null; }
+    }
+    return _ac;
+  }
+
+  function tom(freq, dur, tipo, atraso, vol) {
+    if (!S.som) return;
+    const ac = audio();
+    if (!ac) return;
+    try {
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.type = tipo || 'sine';
+      o.frequency.value = freq;
+      g.gain.value = vol == null ? 0.1 : vol;
+      o.connect(g); g.connect(ac.destination);
+      const t = ac.currentTime + (atraso || 0);
+      o.start(t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.stop(t + dur + 0.02);
+    } catch (e) { /* som é acessório: nunca parte o jogo */ }
+  }
+
+  const sfx = {
+    toque:  () => tom(440, 0.06, 'sine', 0, 0.1),
+    errado: () => { tom(196, 0.22, 'sawtooth', 0, 0.12); tom(155, 0.26, 'sawtooth', 0.1, 0.12); },
+    certo:  () => { tom(523, 0.12, 'sine', 0, 0.12); tom(659, 0.12, 'sine', 0.1, 0.12); tom(784, 0.18, 'sine', 0.2, 0.12); }
+  };
+
+  // ------------------------------------------------------------- navegação
+  function ir(ecra) {
+    sfx.toque();
+    set({ ecra, mascote: { aberta: false, aCarregar: false, texto: '' } });
+  }
+
+  function alternarSom() {
+    set(s => ({ som: !s.som }));
+    if (S.som) sfx.toque();
+  }
+
+  // ------------------------------------------------------------ celebração
+  let _celTO = null;
+  function celebrar(emoji, texto) {
+    sfx.certo();
+    set({ celebracao: { emoji, texto } });
+    clearTimeout(_celTO);
+    _celTO = setTimeout(() => set({ celebracao: null }), 1500);
+  }
+
+  // -------------------------------------------------------------- mascote
+  /**
+   * Pede uma pista ao backend. NUNCA parte:
+   * o servidor devolve sempre 200 com fallback, e aqui há rede de segurança.
+   */
+  async function pedirDica(contexto) {
+    set({ mascote: { aberta: true, aCarregar: true, texto: '' } });
+    let texto = '';
+    try {
+      const r = await fetch('/api/dica', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contexto })
+      });
+      const d = await r.json();
+      texto = (d && d.texto) || '';
+    } catch (e) { texto = ''; }
+    if (!texto.trim()) texto = fallbackDica();
+    set({ mascote: { aberta: true, aCarregar: false, texto: texto.trim() } });
+  }
+
+  async function avaliarDesenho(base64, desafio) {
+    set({ mascote: { aberta: true, aCarregar: true, texto: '' } });
+    let texto = '';
+    try {
+      const r = await fetch('/api/desenho', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imagem: base64, desafio })
+      });
+      const d = await r.json();
+      texto = (d && d.texto) || '';
+    } catch (e) { texto = ''; }
+    if (!texto.trim()) texto = fallbackElogio();
+    set({ mascote: { aberta: true, aCarregar: false, texto: texto.trim() } });
+  }
+
+  function fecharMascote() {
+    set({ mascote: { aberta: false, aCarregar: false, texto: '' } });
+  }
+
+  // Fallbacks do lado do cliente — se nem o servidor responder (rede caiu).
+  const DICAS = [
+    'Hmm, quase! Olha outra vez com calma e conta devagarinho. Tu consegues! 🌱',
+    'Pensa bem: o que é que muda quando fazes de outra maneira? Experimenta!',
+    'Boa tentativa! Volta a ler o desafio e imagina passo a passo. Estou aqui contigo.'
+  ];
+  const ELOGIOS = [
+    'Que giro o teu desenho! Vê-se que puseste cuidado. E se juntasses mais uns pormenores da natureza? 🌱',
+    'Adorei as tuas cores! Conta-me com o traço o que acontece a seguir na tua folha.',
+    'Muito bem! O teu desenho tem vida. Experimenta acrescentar a terra por baixo, para ele voltar ao solo.'
+  ];
+  const fallbackDica   = () => DICAS[(Math.random() * DICAS.length) | 0];
+  const fallbackElogio = () => ELOGIOS[(Math.random() * ELOGIOS.length) | 0];
+
+  // ---------------------------------------------------------- arrasto touch
+  /**
+   * Arrasto com Pointer Events — funciona com dedo, rato e caneta.
+   * O protótipo usava mouse events; em tablet isso não chega.
+   * @param ev     evento pointerdown
+   * @param visual {cor, icone, etiqueta} para o fantasma
+   * @param aoLargar callback(elementoAlvo) -> void
+   */
+  function iniciarArrasto(ev, visual, aoLargar) {
+    ev.preventDefault();
+    sfx.toque();
+
+    const fantasma = document.createElement('div');
+    fantasma.className = 'fantasma';
+    fantasma.style.background = visual.cor || 'var(--azul)';
+    fantasma.style.left = ev.clientX + 'px';
+    fantasma.style.top = ev.clientY + 'px';
+    fantasma.innerHTML =
+      (visual.icone ? '<span style="font-size:22px">' + visual.icone + '</span>' : '') +
+      '<span>' + (visual.etiqueta || '') + '</span>';
+    document.body.appendChild(fantasma);
+
+    const mover = e => {
+      fantasma.style.left = e.clientX + 'px';
+      fantasma.style.top = e.clientY + 'px';
+    };
+
+    const largar = e => {
+      document.removeEventListener('pointermove', mover);
+      document.removeEventListener('pointerup', largar);
+      document.removeEventListener('pointercancel', largar);
+      fantasma.remove();
+      // elementFromPoint é o que permite largar em qualquer alvo sem HTML5 DnD
+      const alvo = document.elementFromPoint(e.clientX, e.clientY);
+      try { aoLargar(alvo); } catch (err) { console.error(err); }
+    };
+
+    document.addEventListener('pointermove', mover);
+    document.addEventListener('pointerup', largar);
+    document.addEventListener('pointercancel', largar);
+  }
+
+  // ------------------------------------------------------------------ api
+  global.MB = {
+    estado, set, aoMudar, reiniciar, baralhar,
+    sfx, ir, alternarSom, celebrar,
+    pedirDica, avaliarDesenho, fecharMascote,
+    iniciarArrasto
+  };
+
+})(window);
