@@ -1,0 +1,455 @@
+/* Mundo Buinho — identidade Buinho EDUCATIVO
+   Buinho FabLab, Messejana · CC-BY-SA 4.0
+   ⚠️ Paleta Educativo (creme/azul/laranja). NUNCA misturar com a Main. */
+
+:root {
+  --creme: #FAF0E1;
+  --creme-escuro: #EADFCB;
+  --castanho-claro: #C3BAA3;
+  --castanho: #8A8578;
+  --castanho-2: #9A927F;
+  --azul: #2038A6;
+  --azul-fundo: #16296f;
+  --laranja: #FA6415;
+  --laranja-fundo: #b23c0a;
+  --verde: #6B8F3E;
+  --verde-fundo: #55722f;
+  --tinta: #22201C;
+}
+
+/* Fontes locais — escolas do Alentejo nem sempre têm boa rede (spec §4) */
+@font-face {
+  font-family: 'Fredoka';
+  src: url('../fonts/Fredoka-Variable.woff2') format('woff2-variations');
+  font-weight: 300 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nunito';
+  src: url('../fonts/Nunito-Variable.woff2') format('woff2-variations');
+  font-weight: 200 1000;
+  font-display: swap;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+  color: var(--tinta);
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  background:
+    radial-gradient(circle at 12% 16%, rgba(46,91,230,.16), transparent 34%),
+    radial-gradient(circle at 90% 10%, rgba(250,100,21,.15), transparent 32%),
+    radial-gradient(circle at 84% 84%, rgba(63,163,77,.15), transparent 36%),
+    radial-gradient(circle at 16% 90%, rgba(246,185,59,.18), transparent 36%),
+    var(--creme);
+  background-attachment: fixed;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  background: none;
+  color: inherit;
+}
+
+/* ---------- Animações (transcritas do protótipo) ---------- */
+@keyframes buPop    { 0%{transform:scale(.6);opacity:0} 60%{transform:scale(1.12)} 100%{transform:scale(1);opacity:1} }
+@keyframes buFloat  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+@keyframes buWiggle { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+@keyframes buFall   { 0%{transform:translateY(-20px) rotate(0);opacity:1} 100%{transform:translateY(560px) rotate(540deg);opacity:0} }
+@keyframes buPulse  { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+@keyframes buDots   { 0%,80%,100%{opacity:.25} 40%{opacity:1} }
+@keyframes buRise   { from{transform:translateY(24px);opacity:0} to{transform:translateY(0);opacity:1} }
+@keyframes buSpin   { to{transform:rotate(360deg)} }
+
+/* Respeitar quem prefere menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001s !important;
+    transition-duration: .001s !important;
+  }
+}
+
+/* ---------- Estrutura ---------- */
+.app {
+  max-width: 820px;
+  margin: 0 auto;
+  min-height: 100%;
+  position: relative;
+  padding-bottom: 40px;
+}
+
+.ecra { animation: buRise .35s ease both; }
+.escondido { display: none !important; }
+
+/* ---------- Barra de topo ---------- */
+.topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px 8px;
+}
+
+.topo-titulo {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 25px;
+  margin: 0;
+  flex: 1;
+  line-height: 1.1;
+}
+
+.topo-sub {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--castanho);
+  margin: 2px 0 0;
+}
+
+.btn-redondo {
+  width: 52px;
+  height: 52px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--creme);
+  box-shadow: 0 4px 0 var(--castanho-claro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.btn-redondo:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--castanho-claro); }
+
+.avatar {
+  width: 50px; height: 50px; flex: none;
+  border-radius: 50%;
+  background: var(--creme);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 0 var(--castanho-claro);
+}
+
+/* ---------- Mapa de níveis ---------- */
+.mapa {
+  position: relative;
+  height: 900px;
+  margin-top: 8px;
+}
+
+.mapa-mascote {
+  position: absolute;
+  left: 50%; top: 62px;
+  transform: translate(-50%,-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  pointer-events: none;
+  text-align: center;
+}
+
+.mascote-bolha {
+  width: 76px; height: 76px;
+  border-radius: 50%;
+  background: var(--creme);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 5px 0 rgba(0,0,0,.12);
+  animation: buFloat 3s ease-in-out infinite;
+}
+
+.mapa-legenda {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--castanho);
+  background: rgba(250,240,225,.75);
+  padding: 4px 14px;
+  border-radius: 999px;
+}
+
+.nivel {
+  position: absolute;
+  transform: translate(-50%,-50%);
+  width: 172px;
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+  padding: 0;
+}
+.nivel:active { transform: translate(-50%,-50%) translateY(4px); }
+
+.nivel-bola {
+  position: relative;
+  width: 104px; height: 104px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 46px;
+  box-shadow: 0 9px 0 var(--sombra), 0 16px 26px rgba(34,32,28,.22);
+  background: var(--cor);
+}
+
+.nivel-num {
+  position: absolute;
+  top: -6px; left: -6px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--creme);
+  color: var(--sombra);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700; font-size: 17px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 0 var(--castanho-claro);
+}
+
+.nivel-nome {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  text-align: center;
+  line-height: 1.15;
+}
+
+.nivel-tema {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--castanho);
+  text-align: center;
+}
+
+/* Trilho pontilhado entre níveis */
+.trilho {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ---------- Cartões de jogo ---------- */
+.painel {
+  background: rgba(250,240,225,.92);
+  border-radius: 26px;
+  margin: 10px 16px;
+  padding: 20px 18px;
+  box-shadow: 0 6px 0 var(--creme-escuro);
+}
+
+.enunciado {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.3;
+  margin: 0 0 16px;
+  text-align: center;
+}
+
+/* Alvos de toque ≥44px (spec §5) */
+.alvo { min-height: 58px; min-width: 58px; }
+
+.chip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 12px;
+  border-radius: 16px;
+  min-height: 58px;
+  background: var(--creme);
+  box-shadow: 0 4px 0 var(--castanho-claro);
+  color: var(--tinta);
+  font-weight: 700;
+  touch-action: none;
+}
+.chip.feito {
+  background: #e7efd9;
+  box-shadow: inset 0 0 0 2px var(--verde);
+  opacity: .75;
+}
+
+.slot {
+  min-height: 74px;
+  border-radius: 18px;
+  border: 3px dashed var(--castanho-claro);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  color: var(--castanho);
+  background: rgba(255,255,255,.35);
+}
+.slot.cheio {
+  border-style: solid;
+  border-color: var(--verde);
+  background: #e7efd9;
+  color: var(--tinta);
+}
+
+.grelha { display: grid; gap: 10px; }
+.grelha-2 { grid-template-columns: 1fr 1fr; }
+.grelha-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* ---------- Botões grandes ---------- */
+.botao {
+  height: 70px;
+  border-radius: 20px;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  background: var(--azul);
+  color: #fff;
+  box-shadow: 0 5px 0 var(--azul-fundo);
+  width: 100%;
+}
+.botao:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--azul-fundo); }
+.botao.errado {
+  background: var(--laranja);
+  box-shadow: 0 5px 0 var(--laranja-fundo);
+  animation: buWiggle .3s ease;
+}
+.botao.verde { background: var(--verde); box-shadow: 0 5px 0 var(--verde-fundo); }
+.botao.laranja { background: var(--laranja); box-shadow: 0 5px 0 var(--laranja-fundo); }
+
+.botao-pequeno {
+  height: 52px;
+  border-radius: 16px;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  padding: 0 20px;
+  background: var(--creme);
+  box-shadow: 0 4px 0 var(--castanho-claro);
+}
+.botao-pequeno:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--castanho-claro); }
+
+/* ---------- Progresso ---------- */
+.pontos { display: flex; gap: 6px; justify-content: center; margin-top: 16px; }
+.ponto {
+  width: 10px; height: 10px;
+  border-radius: 5px;
+  background: var(--castanho-claro);
+  transition: all .3s;
+}
+.ponto.feito { background: var(--verde); }
+.ponto.actual { width: 26px; background: var(--laranja); }
+
+/* ---------- Mascote / balão ---------- */
+.mascote-painel {
+  position: fixed;
+  left: 50%; bottom: 20px;
+  transform: translateX(-50%);
+  width: min(560px, calc(100% - 32px));
+  background: var(--creme);
+  border-radius: 24px;
+  padding: 16px 18px;
+  box-shadow: 0 8px 0 var(--castanho-claro), 0 18px 40px rgba(34,32,28,.25);
+  display: flex; gap: 14px; align-items: flex-start;
+  animation: buRise .3s ease both;
+  z-index: 50;
+}
+
+.mascote-texto {
+  flex: 1;
+  font-size: 16.5px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.pontinhos { display: flex; gap: 5px; padding-top: 8px; }
+.pontinhos span {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--azul);
+  animation: buDots 1.2s infinite;
+}
+.pontinhos span:nth-child(2) { animation-delay: .15s; }
+.pontinhos span:nth-child(3) { animation-delay: .3s; }
+
+/* ---------- Celebração ---------- */
+.celebracao {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  pointer-events: none;
+  z-index: 60;
+}
+.celebracao-emoji { font-size: 92px; animation: buPop .4s ease both; }
+.celebracao-texto {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700; font-size: 30px;
+  color: var(--tinta);
+  background: var(--creme);
+  padding: 10px 26px;
+  border-radius: 999px;
+  box-shadow: 0 6px 0 var(--castanho-claro);
+  animation: buPop .4s ease .08s both;
+}
+.confete {
+  position: absolute; top: -20px;
+  border-radius: 3px;
+}
+
+/* ---------- Fantasma de arrasto ---------- */
+.fantasma {
+  position: fixed;
+  z-index: 100;
+  pointer-events: none;
+  transform: translate(-50%,-50%) scale(1.08);
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(34,32,28,.35);
+}
+
+/* ---------- Canvas de desenho ---------- */
+.tela {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: inset 0 0 0 3px var(--creme-escuro);
+  touch-action: none;   /* essencial: senão o dedo faz scroll em vez de desenhar */
+  display: block;
+}
+
+.paleta { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 14px; }
+.cor {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  box-shadow: 0 3px 0 rgba(0,0,0,.18);
+}
+.cor.activa { outline: 4px solid var(--laranja); outline-offset: 2px; }
+
+.espessura {
+  width: 50px; height: 50px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--creme-escuro);
+  box-shadow: 0 3px 0 var(--castanho-claro);
+}
+.espessura.activa { outline: 3px solid var(--azul); outline-offset: 1px; }
+.espessura i { display: block; border-radius: 50%; background: var(--tinta); }
+
+/* ---------- Tablet / telemóvel ---------- */
+@media (max-width: 860px) {
+  .mapa { height: 820px; }
+  .nivel { width: 140px; }
+  .nivel-bola { width: 88px; height: 88px; font-size: 38px; }
+}
+
+@media (max-width: 560px) {
+  .topo-titulo { font-size: 21px; }
+  .mapa { height: 760px; }
+  .nivel { width: 116px; }
+  .nivel-bola { width: 74px; height: 74px; font-size: 32px; }
+  .nivel-nome { font-size: 15px; }
+  .nivel-tema { display: none; }
+  .botao { height: 62px; font-size: 24px; }
+  .grelha-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Landscape em tablet: o mapa encolhe para caber sem scroll */
+@media (max-height: 620px) and (orientation: landscape) {
+  .mapa { height: 620px; }
+  .nivel-bola { width: 76px; height: 76px; font-size: 32px; }
+  .mapa-mascote { display: none; }
+}
