@@ -9,7 +9,7 @@
    - /api/*  -> NUNCA em cache (respostas da mascote são sempre frescas;
                 se a rede falhar, o cliente já tem os seus próprios fallbacks) */
 
-const CACHE = 'mundo-buinho-v1';
+const CACHE = 'mundo-buinho-v2';
 
 const ESTATICOS = [
   './',

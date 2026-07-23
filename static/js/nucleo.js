@@ -99,39 +99,49 @@
 
   // -------------------------------------------------------------- mascote
   /**
-   * Pede uma pista ao backend. NUNCA parte:
-   * o servidor devolve sempre 200 com fallback, e aqui há rede de segurança.
+   * POST ao backend com timeout curto (AbortController). Devolve o JSON, ou lança.
+   * O timeout é curto DE PROPÓSITO: a criança nunca espera pela rede — a frase
+   * local já apareceu; isto é só a tentativa de a melhorar com a IA, em fundo.
+   */
+  function pedirAoServidor(rota, corpo, ms) {
+    const ctrl = new AbortController();
+    const to = setTimeout(() => ctrl.abort(), ms || 3500);
+    return fetch(rota, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(corpo),
+      signal: ctrl.signal
+    })
+      .then(r => r.json())
+      .then(d => { clearTimeout(to); return d; },
+            e => { clearTimeout(to); throw e; });
+  }
+
+  /**
+   * Pede uma pista. INSTANTÂNEO e OFFLINE: mostra já uma frase local; se houver
+   * IA montada e a rede responder depressa, substitui pela pista da IA.
    */
   async function pedirDica(contexto) {
-    set({ mascote: { aberta: true, aCarregar: true, texto: '' } });
-    let texto = '';
+    // 1) frase local imediata — sem spinner, sem espera, funciona sem rede.
+    set({ mascote: { aberta: true, aCarregar: false, texto: fallbackDica() } });
+    // 2) em fundo, tenta uma pista melhor da IA (só substitui se vier MESMO da IA).
     try {
-      const r = await fetch('/api/dica', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contexto })
-      });
-      const d = await r.json();
-      texto = (d && d.texto) || '';
-    } catch (e) { texto = ''; }
-    if (!texto.trim()) texto = fallbackDica();
-    set({ mascote: { aberta: true, aCarregar: false, texto: texto.trim() } });
+      const d = await pedirAoServidor('/api/dica', { contexto });
+      if (d && d.fonte === 'mistral' && d.texto && d.texto.trim() && S.mascote.aberta) {
+        set({ mascote: { aberta: true, aCarregar: false, texto: d.texto.trim() } });
+      }
+    } catch (e) { /* offline/lento: a frase local já está no ecrã */ }
   }
 
   async function avaliarDesenho(base64, desafio) {
-    set({ mascote: { aberta: true, aCarregar: true, texto: '' } });
-    let texto = '';
+    // Elogio local imediato; a IA (se houver) comenta o desenho logo a seguir.
+    set({ mascote: { aberta: true, aCarregar: false, texto: fallbackElogio() } });
     try {
-      const r = await fetch('/api/desenho', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imagem: base64, desafio })
-      });
-      const d = await r.json();
-      texto = (d && d.texto) || '';
-    } catch (e) { texto = ''; }
-    if (!texto.trim()) texto = fallbackElogio();
-    set({ mascote: { aberta: true, aCarregar: false, texto: texto.trim() } });
+      const d = await pedirAoServidor('/api/desenho', { imagem: base64, desafio });
+      if (d && d.fonte === 'mistral' && d.texto && d.texto.trim() && S.mascote.aberta) {
+        set({ mascote: { aberta: true, aCarregar: false, texto: d.texto.trim() } });
+      }
+    } catch (e) { /* sem rede: o elogio local já foi mostrado */ }
   }
 
   function fecharMascote() {
