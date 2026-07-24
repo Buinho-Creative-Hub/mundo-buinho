@@ -529,6 +529,7 @@
       case 'grafico':   return visualGrafico(r);
       case 'fracao':    return visualFracao(r);
       case 'angulo':    return visualAngulo(r);
+      case 'domino':    return visualDomino(r);
       default:          return '';
     }
   }
@@ -600,6 +601,26 @@
       <line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="var(--azul)" stroke-width="5" stroke-linecap="round"/>
       <circle cx="${cx}" cy="${cy}" r="4" fill="var(--tinta)"/>
     </svg>`;
+  }
+
+  // Motor Dominó (q14, q15): ponta aberta numa peça de dominó; a criança escolhe a
+  // meia-peça que VALE O MESMO. Herda o motor de quiz (níveis + cronómetro + descida).
+  function visualDomino(r) {
+    const d = r.dom;
+    let conteudo;
+    if (d.tipo === 'modelo') {
+      const partes = Array.from({ length: d.den }).map((_, i) =>
+        `<div class="qfrac-parte ${i < d.num ? 'cheia' : ''}"></div>`).join('');
+      conteudo = `<div class="qfrac-barra" style="grid-template-columns:repeat(${d.den},1fr);max-width:220px;margin:0 auto">${partes}</div>`;
+    } else {
+      conteudo = `<div class="domino-valor">${esc(d.texto)}</div>` +
+                 (d.sub ? `<div class="domino-sub">${esc(d.sub)}</div>` : '');
+    }
+    return `<div class="domino-peca" aria-hidden="true">
+      <div class="domino-meia domino-aberta">${conteudo}</div>
+      <div class="domino-divisor"></div>
+      <div class="domino-meia domino-incognita">?</div>
+    </div>`;
   }
 
   // ---- vista principal ----

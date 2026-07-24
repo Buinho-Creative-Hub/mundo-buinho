@@ -34,7 +34,7 @@ window.HTMLCanvasElement.prototype.toDataURL = () => 'data:image/png;base64,AAAA
 window.fetch = async () => ({ json: async () => ({ texto: 'pista de teste', fonte: 'mock' }) });
 
 // carregar os scripts pela ordem do index.html
-['static/js/dados.js', 'static/js/dados-mat.js', 'static/js/nucleo.js', 'static/js/jogos.js'].forEach(f => {
+['static/js/dados.js', 'static/js/dados-mat.js', 'static/js/dados-dominos.js', 'static/js/nucleo.js', 'static/js/jogos.js'].forEach(f => {
   window.eval(fs.readFileSync(path.join(B, f), 'utf8'));
 });
 window.document.dispatchEvent(new window.Event('DOMContentLoaded'));
@@ -61,7 +61,7 @@ grupo('ARRANQUE');
 ok($('#app').innerHTML.length > 500, 'render inicial produz HTML');
 ok(MB.estado().ecra === 'home', 'ecrã inicial é home');
 ok($$('.cat-card').length === D.categorias.length, 'home mostra ' + D.categorias.length + ' categorias (tem ' + $$('.cat-card').length + ')');
-ok(window.MB_JOGOS && window.MB_JOGOS.length === 13, 'há 13 jogos de matemática/lógica em MB_JOGOS');
+ok(window.MB_JOGOS && window.MB_JOGOS.length === 15, 'há 15 jogos em MB_JOGOS (13 mat./lógica + 2 do motor Dominó)');
 ok(D.categorias.find(c => c.id === 'logica').jogos.length === 3, 'a categoria Lógica tem 3 jogos');
 ok(D.categorias.find(c => c.id === 'geometria').jogos.length === 2, 'a categoria Geometria tem 2 jogos');
 
@@ -241,6 +241,33 @@ const esperar = ms => new Promise(r => setTimeout(r, ms));
   ok(linhas9.length === 3, 'q9 (Gráficos) 1ª ronda é pictograma com 3 linhas');
   const icones9 = linhas9.map(l => (l.querySelector('.pic-simb') || {}).textContent);
   ok(new Set(icones9).size >= 2, 'as linhas do pictograma usam ícones DIFERENTES (maçã/laranja/pera), não todos iguais');
+  MB.ir('home');
+
+  // ==================================================================
+  // MOTOR DOMINÓ — q14/q15 (corre no motor de quiz: timer + níveis + descida)
+  // ==================================================================
+  grupo('MOTOR DOMINÓ — equivalências');
+  ok(!!jogoDe('q14'), 'q14 (Dominó de Frações) existe em MB_JOGOS');
+  ok(!!jogoDe('q15'), 'q15 (Dominó Decimal) existe em MB_JOGOS');
+  ok(!!MB.estado().q14, 'q14 tem estado inicial (chaveado pelo id real)');
+  MB.ir('q14');
+  ok(MB.estado().ecra === 'q14', 'entra no q14');
+  ok(!!$('.domino-peca'), 'q14 desenha a peça de dominó');
+  ok(!!$('#timer-barra'), 'q14 herda o cronómetro do motor de quiz');
+  ok($$('[data-accao="quiz-resp"]').length === 4, 'q14 mostra 4 meias-peças');
+  clicarCerto('q14'); await esperar(900);
+  ok(MB.estado().q14.round === 1, 'acertar a equivalência avança de round');
+  clicarCerto('q14'); await esperar(900);
+  clicarCerto('q14'); await esperar(1300);
+  ok(MB.estado().q14.nivel === 1 && MB.estado().q14.round === 0, 'completar o nível 1 sobe ao nível 2');
+  const rq14 = respostaActual('q14');
+  clicar($$('[data-accao="quiz-resp"]').find(x => x.dataset.v !== String(rq14)));
+  await esperar(800);
+  ok(MB.estado().q14.nivel === 0, 'errar desce de nível (despromoção mantida — decisão B do Carlos)');
+  MB.fecharMascote();
+  MB.ir('q15');
+  ok(!!$('.domino-peca'), 'q15 (Dominó Decimal) também desenha a peça');
+  ok($$('[data-accao="quiz-resp"]').length === 4, 'q15 mostra 4 meias-peças');
   MB.ir('home');
 
   // -------------------------------------------------------- Cronómetro (núcleo)

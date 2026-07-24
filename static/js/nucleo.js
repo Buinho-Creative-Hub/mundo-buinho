@@ -24,8 +24,11 @@
   // Cada jogo: nivel 0..2, round 0..2. Ao perder, desce um nível (round=0).
   function estadoQuiz() {
     const q = {};
-    const n = (window.MB_JOGOS && window.MB_JOGOS.length) || 13;
-    for (let i = 1; i <= n; i++) q['q' + i] = { nivel: 0, round: 0, errado: null, aResolver: false };
+    const jogos = (window.MB_JOGOS || []);
+    // Chaveia pelo id REAL de cada jogo (q1..q10 + q14/q15 do motor Dominó, etc.),
+    // não por um contador — senão jogos com id fora da sequência ficavam sem estado.
+    if (jogos.length) jogos.forEach(j => { q[j.id] = { nivel: 0, round: 0, errado: null, aResolver: false }; });
+    else for (let i = 1; i <= 15; i++) q['q' + i] = { nivel: 0, round: 0, errado: null, aResolver: false };
     return q;
   }
 
