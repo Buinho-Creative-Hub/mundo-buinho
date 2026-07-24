@@ -34,7 +34,7 @@ window.HTMLCanvasElement.prototype.toDataURL = () => 'data:image/png;base64,AAAA
 window.fetch = async () => ({ json: async () => ({ texto: 'pista de teste', fonte: 'mock' }) });
 
 // carregar os scripts pela ordem do index.html
-['static/js/dados.js', 'static/js/dados-mat.js', 'static/js/dados-dominos.js', 'static/js/nucleo.js', 'static/js/jogos.js'].forEach(f => {
+['static/js/dados.js', 'static/js/dados-mat.js', 'static/js/dados-dominos.js', 'static/js/dados-memoria.js', 'static/js/nucleo.js', 'static/js/jogos.js'].forEach(f => {
   window.eval(fs.readFileSync(path.join(B, f), 'utf8'));
 });
 window.document.dispatchEvent(new window.Event('DOMContentLoaded'));
@@ -268,6 +268,42 @@ const esperar = ms => new Promise(r => setTimeout(r, ms));
   MB.ir('q15');
   ok(!!$('.domino-peca'), 'q15 (Dominó Decimal) também desenha a peça');
   ok($$('[data-accao="quiz-resp"]').length === 4, 'q15 mostra 4 meias-peças');
+  MB.ir('home');
+
+  // ==================================================================
+  // MOTOR MEMÓRIA DE PARES — m1/m2/m3 (tabuleiro, níveis, cronómetro, descida)
+  // ==================================================================
+  grupo('MOTOR MEMÓRIA — pares e equivalências');
+  ok(!!window.MB_MEMORIA && window.MB_MEMORIA.length === 3, 'há 3 jogos de memória (m1,m2,m3)');
+  MB.ir('m1');
+  ok(MB.estado().ecra === 'm1', 'entra no m1');
+  ok(!!MB.estado().mem.m1, 'm1 monta o tabuleiro ao entrar');
+  ok($$('.mem-carta').length === 8, 'nível 1 = 8 cartas (4 pares)');
+  ok(!!$('#timer-barra'), 'm1 tem cronómetro (decisão B)');
+
+  const cartas = MB.estado().mem.m1.cartas;
+  const doisDoPar = p => { const r = []; cartas.forEach((c, i) => { if (c.par === p) r.push(i); }); return r; };
+  const cartaEl = i => $(`[data-accao="mem-virar"][data-idx="${i}"]`);
+
+  // par certo -> resolve
+  let [a0, b0] = doisDoPar(0);
+  clicar(cartaEl(a0));
+  ok(MB.estado().mem.m1.viradas.length === 1, 'virar 1 carta regista a virada');
+  clicar(cartaEl(b0));
+  ok(MB.estado().mem.m1.resolvidos.indexOf(0) >= 0, 'duas cartas do mesmo par ficam resolvidas');
+
+  // par errado -> bloqueia e volta a fechar
+  clicar(cartaEl(doisDoPar(1)[0]));
+  clicar(cartaEl(doisDoPar(2)[0]));
+  ok(MB.estado().mem.m1.bloqueado === true, 'duas cartas diferentes bloqueiam o tabuleiro');
+  await esperar(950);
+  ok(MB.estado().mem.m1.viradas.length === 0 && !MB.estado().mem.m1.bloqueado, 'cartas erradas voltam a fechar');
+
+  // limpar o resto do nível -> sobe de nível
+  [1, 2, 3].forEach(p => { const [x, y] = doisDoPar(p); clicar(cartaEl(x)); clicar(cartaEl(y)); });
+  await esperar(1600);
+  ok(MB.estado().mem.m1.nivel === 1, 'limpar o nível 1 sobe ao nível 2');
+  ok($$('.mem-carta').length === 10, 'nível 2 = 10 cartas (5 pares)');
   MB.ir('home');
 
   // -------------------------------------------------------- Cronómetro (núcleo)

@@ -80,12 +80,15 @@ window.MB_DADOS = {
   // matemática/lógica (ecra q*) vêm de MB_JOGOS; os biofab (g*) de MB_DADOS.
   categorias: [
     { id: 'mult', nome: 'Multiplicação', icone: '✖️', cor: '#FA6415', sombra: '#b23c0a',
-      jogos: [{ ecra: 'q1', nome: 'Tabuadas', sub: '× até 2 dígitos' }] },
+      jogos: [{ ecra: 'q1', nome: 'Tabuadas', sub: '× até 2 dígitos' },
+              { ecra: 'm1', nome: 'Memória da Tabuada', sub: 'casa a conta ao resultado' }] },
     { id: 'div', nome: 'Divisão', icone: '➗', cor: '#2038A6', sombra: '#16296f',
-      jogos: [{ ecra: 'q2', nome: 'Dividir', sub: 'exacta e com resto' }] },
+      jogos: [{ ecra: 'q2', nome: 'Dividir', sub: 'exacta e com resto' },
+              { ecra: 'm2', nome: 'Memória da Divisão', sub: 'casa a conta ao resultado' }] },
     { id: 'fracoes', nome: 'Frações', icone: '🍕', cor: '#6B8F3E', sombra: '#55722f',
       jogos: [{ ecra: 'q3', nome: 'Partes de um todo', sub: 'fração de uma quantidade' },
-              { ecra: 'q14', nome: 'Dominó de Frações', sub: 'encaixa o que vale o mesmo' }] },
+              { ecra: 'q14', nome: 'Dominó de Frações', sub: 'encaixa o que vale o mesmo' },
+              { ecra: 'm3', nome: 'Memória das Frações', sub: 'casa frações que valem o mesmo' }] },
     { id: 'decimais', nome: 'Decimais', icone: '🔢', cor: '#FA6415', sombra: '#b23c0a',
       jogos: [{ ecra: 'q4', nome: 'Vírgulas', sub: '×÷ 10 e 100, comparar' },
               { ecra: 'q15', nome: 'Dominó Decimal', sub: '0,5 = ½ = 50%' }] },

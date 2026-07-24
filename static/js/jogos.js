@@ -725,6 +725,129 @@
     </div>`;
   }
 
+  // =======================================================================
+  // MOTOR MEMÓRIA DE PARES — m1/m2/m3. Vira 2 cartas; se valem o mesmo, ficam.
+  // 3 níveis (4→5→6 pares). Cronómetro por nível + descida ao ESGOTAR o tempo
+  // (decisão B do Carlos, aplicada ao género: despromover a cada falha tornaria
+  // um jogo de memória injogável — as falhas são como se aprende o tabuleiro).
+  // =======================================================================
+  const MEM = () => (window.MB_MEMORIA || []);
+  const ehMem = e => /^m\d+$/.test(e);
+  function jogoMem(gid) { return MEM().find(j => j.id === gid); }
+  const MEM_TEMPO = [60, 75, 90];
+
+  function setMem(gid, patch) {
+    MB.set(s => {
+      const mem = Object.assign({}, s.mem);
+      mem[gid] = Object.assign({}, mem[gid], patch);
+      return { mem };
+    });
+  }
+  function estadoMem(gid) { return MB.estado().mem[gid]; }
+
+  function memIniciar(gid, nivel) {
+    const j = jogoMem(gid);
+    const cartas = [];
+    j.niveis[nivel].forEach((p, pi) => { cartas.push({ par: pi, face: p.a }); cartas.push({ par: pi, face: p.b }); });
+    MB.set(s => {
+      const mem = Object.assign({}, s.mem);
+      mem[gid] = { nivel: nivel, cartas: MB.baralhar(cartas), viradas: [], resolvidos: [], bloqueado: false };
+      return { mem };
+    });
+  }
+
+  function memDescer(gid) {
+    const S = estadoMem(gid); if (!S) return;
+    const novo = Math.max(0, S.nivel - 1);
+    MB.sfx.errado();
+    memIniciar(gid, novo);
+    MB.set({ mascote: { aberta: true, aCarregar: false, texto: '⏰ Tempo esgotado! Voltas ao Nível ' + (novo + 1) + '. 🌱' } });
+  }
+
+  function memVirar(idx) {
+    const gid = MB.estado().ecra;
+    if (!ehMem(gid)) return;
+    const S = estadoMem(gid);
+    if (!S || S.bloqueado) return;
+    if (S.viradas.indexOf(idx) >= 0) return;
+    if (S.resolvidos.indexOf(S.cartas[idx].par) >= 0) return;
+
+    const viradas = S.viradas.concat(idx);
+    MB.sfx.toque();
+    if (viradas.length < 2) { setMem(gid, { viradas: viradas }); return; }
+
+    const c1 = S.cartas[viradas[0]], c2 = S.cartas[viradas[1]];
+    if (c1.par === c2.par) {
+      const resolvidos = S.resolvidos.concat(c1.par);
+      setMem(gid, { viradas: [], resolvidos: resolvidos });
+      if (resolvidos.length === S.cartas.length / 2) {
+        MB.pararTimer();
+        const nivel = S.nivel;
+        if (nivel >= 2) {
+          MB.celebrar('🏆', 'Ganhaste o jogo!');
+          const cat = catDe(gid);
+          setTimeout(() => MB.ir(cat ? 'cat:' + cat : 'home'), 1400);
+        } else {
+          MB.celebrar('⭐', 'Nível ' + (nivel + 1) + ' feito!');
+          setTimeout(() => memIniciar(gid, nivel + 1), 1400);
+        }
+      } else {
+        MB.sfx.certo();
+      }
+    } else {
+      setMem(gid, { viradas: viradas, bloqueado: true });
+      setTimeout(() => setMem(gid, { viradas: [], bloqueado: false }), 850);
+    }
+  }
+
+  function progressoMem(S) {
+    let dots = '';
+    for (let l = 0; l < 3; l++) dots += `<span class="qdot ${l < S.nivel ? 'feito' : ''} ${l === S.nivel ? 'actual' : ''}"></span>`;
+    return `<div class="qprogresso" style="justify-content:center"><div class="qnivel nivel-actual"><span class="qnivel-rot">Nível ${S.nivel + 1} de 3</span><div class="qdots">${dots}</div></div></div>`;
+  }
+
+  function vistaMemoria(gid) {
+    const j = jogoMem(gid);
+    const S = estadoMem(gid);
+    if (!j) return `${topo('Jogo', '', true)}<div class="painel"><p class="enunciado">Jogo não encontrado.</p></div>`;
+    if (!S) return `${topo(j.icone + ' ' + j.nome, 'A preparar…', true)}<div class="painel"></div>`;
+    const N = S.cartas.length;
+    const cols = (N % 4 === 0) ? 4 : 5;   // 8→4 · 10→5 · 12→4
+    const cartas = S.cartas.map((c, idx) => {
+      const feita = S.resolvidos.indexOf(c.par) >= 0;
+      const aberta = feita || S.viradas.indexOf(idx) >= 0;
+      return `<button class="mem-carta ${aberta ? 'aberta' : ''} ${feita ? 'feita' : ''}"
+        data-accao="mem-virar" data-idx="${idx}"${feita ? ' disabled' : ''}>
+        <span class="mem-face">${aberta ? esc(c.face) : '🌱'}</span></button>`;
+    }).join('');
+    return `${topo(j.icone + ' ' + j.nome, 'Encontra os pares que valem o mesmo', true)}
+      <div class="painel">
+        ${barraTempo()}
+        <div class="mem-grelha" style="grid-template-columns:repeat(${cols},1fr)">${cartas}</div>
+        ${progressoMem(S)}
+      </div>`;
+  }
+
+  // ---- gestão unificada do cronómetro (quiz q* + memória m*) ----
+  let _timerKey = null;
+  function manageTimer(S) {
+    let key = null, dur = null, onEnd = null;
+    if (ehQuiz(S.ecra) && jogo(S.ecra)) {
+      const st = S[S.ecra];
+      if (st.aResolver) return;                       // a celebrar: não reiniciar
+      key = 'q:' + S.ecra + ':' + st.nivel + ':' + st.round;
+      dur = TEMPO_NIVEL[st.nivel]; onEnd = () => aoEsgotarTempo(S.ecra);
+    } else if (ehMem(S.ecra) && jogoMem(S.ecra) && S.mem[S.ecra]) {
+      const st = S.mem[S.ecra];
+      key = 'm:' + S.ecra + ':' + st.nivel;
+      dur = MEM_TEMPO[st.nivel]; onEnd = () => memDescer(S.ecra);
+    }
+    if (key === null) { if (_timerKey !== null) { MB.pararTimer(); _timerKey = null; } return; }
+    if (key === _timerKey) return;
+    _timerKey = key;
+    MB.iniciarTimer(dur, onEnd);
+  }
+
   // ------------------------------------------------------------------ render
   const VISTAS = {
     home: vistaHome, g1: vistaG1, g2: vistaG2, g3: vistaG3, g4: vistaG4, g5: vistaG5
@@ -738,6 +861,10 @@
     let vista;
     if (S.ecra.indexOf('cat:') === 0) vista = () => vistaCategoria(S.ecra.slice(4));
     else if (ehQuiz(S.ecra)) vista = () => vistaQuiz(S.ecra);
+    else if (ehMem(S.ecra)) {
+      if (!S.mem[S.ecra]) { memIniciar(S.ecra, 0); return; }   // inicia o tabuleiro e re-desenha
+      vista = () => vistaMemoria(S.ecra);
+    }
     else vista = VISTAS[S.ecra] || vistaHome;
 
     // O canvas guarda o desenho da criança nos seus próprios pixels, não no estado.
@@ -758,8 +885,8 @@
       }
     }
 
-    // cronómetro dos jogos-quiz: arranca/pára conforme o ecrã e a ronda
-    gerirTimer(S);
+    // cronómetro unificado (quiz q* + memória m*): arranca/pára conforme o ecrã
+    manageTimer(S);
 
     _ecraAnterior = S.ecra;
   }
@@ -833,6 +960,9 @@
         // ---- Jogos de matemática (q1..q10) — motor de quiz
         case 'quiz-resp': quizResponder(el.dataset.g, el.dataset.v); break;
         case 'quiz-ajuda': quizAjuda(el.dataset.g); break;
+
+        // ---- Motor Memória de pares (m1..m3)
+        case 'mem-virar': memVirar(+el.dataset.idx); break;
       }
     });
   }

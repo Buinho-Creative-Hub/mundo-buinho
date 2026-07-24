@@ -17,7 +17,8 @@
     g2: { fase: 'ordem', slots: [null, null, null, null], pool: baralhar([0, 1, 2, 3]), ligados: {} },
     g3: { idx: 0, errado: null, aResolver: false },
     g4: { idx: 0, terminado: false },
-    g5: { desafioIdx: 0, cor: '#6B8F3E', espessura: 8 }
+    g5: { desafioIdx: 0, cor: '#6B8F3E', espessura: 8 },
+    mem: {}   // motor Memória de pares (m1..m3): tabuleiro por jogo, montado ao entrar
   }, estadoQuiz());
 
   // Estado dos 10 jogos de matemática (motor de quiz com níveis + cronómetro).
