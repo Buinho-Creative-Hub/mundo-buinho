@@ -4,12 +4,13 @@
    Objectivo: depois da primeira visita, os jogos funcionam SEM REDE.
    As escolas do Alentejo nem sempre têm boa ligação (spec §4).
 
-   Estratégia:
-   - estáticos (HTML/CSS/JS/fontes/ícones) -> cache primeiro, rede como reserva
-   - /api/*  -> NUNCA em cache (respostas da mascote são sempre frescas;
-                se a rede falhar, o cliente já tem os seus próprios fallbacks) */
+   Estratégia (mudada em v9 para acabar com o "aparece sempre a versão antiga"):
+   - HTML/CSS/JS -> REDE PRIMEIRO; se houver rede, mostra sempre a versão mais
+     recente e actualiza a cache. Só usa a cache quando está OFFLINE.
+   - fontes/ícones/manifest -> cache primeiro (raramente mudam, carregam rápido).
+   - /api/* -> nunca em cache (respostas da mascote frescas; cliente tem fallback). */
 
-const CACHE = 'mundo-buinho-v8';   // v8: fix — resposta certa deixa de ficar sempre no 1.º canto 24 Jul 2026
+const CACHE = 'mundo-buinho-v9';   // v9: rede-primeiro no shell da app (fim do problema da cache) 24 Jul 2026
 
 const ESTATICOS = [
   './',
@@ -41,6 +42,15 @@ self.addEventListener('activate', ev => {
   );
 });
 
+// Guarda uma cópia boa na cache (para funcionar offline na próxima).
+function guardar(req, resp) {
+  if (resp && resp.status === 200 && resp.type === 'basic') {
+    const copia = resp.clone();
+    caches.open(CACHE).then(c => c.put(req, copia));
+  }
+  return resp;
+}
+
 self.addEventListener('fetch', ev => {
   const url = new URL(ev.request.url);
 
@@ -50,17 +60,23 @@ self.addEventListener('fetch', ev => {
   // Só tratamos GET do próprio domínio
   if (ev.request.method !== 'GET' || url.origin !== self.location.origin) return;
 
+  // O "shell" da app (navegação + JS/CSS) muda a cada actualização -> REDE PRIMEIRO,
+  // com a cache só como rede de segurança offline. Assim nunca fica preso ao antigo.
+  const ehShell = ev.request.mode === 'navigate' ||
+    /\.(?:js|css)(?:\?|$)/.test(url.pathname);
+
+  if (ehShell) {
+    ev.respondWith(
+      fetch(ev.request)
+        .then(r => guardar(ev.request, r))
+        .catch(() => caches.match(ev.request).then(c => c || caches.match('./index.html')))
+    );
+    return;
+  }
+
+  // Fontes, ícones, manifest: cache primeiro (raramente mudam, mais rápido).
   ev.respondWith(
-    caches.match(ev.request).then(resp => {
-      if (resp) return resp;
-      return fetch(ev.request).then(r => {
-        // guardar cópia para a próxima vez (só respostas boas)
-        if (r && r.status === 200 && r.type === 'basic') {
-          const copia = r.clone();
-          caches.open(CACHE).then(c => c.put(ev.request, copia));
-        }
-        return r;
-      }).catch(() => caches.match('./index.html'));
-    })
+    caches.match(ev.request).then(resp => resp ||
+      fetch(ev.request).then(r => guardar(ev.request, r)).catch(() => resp))
   );
 });
