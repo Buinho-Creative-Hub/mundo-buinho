@@ -29,18 +29,20 @@ de Portugal.
 | 4 | Circular ou Linear? | Raciocínio |
 | 5 | Desenha a tua Folha | Criatividade (com IA) |
 
-**Matemática — 4.º ano (6–10)** · ancorados nas Aprendizagens Essenciais (ver `strategy/ubbu-ae-sobreposicao.md`)
+**Matemática — 4.º ano, nível exigente (6–10)** · ancorados nas Aprendizagens Essenciais (`strategy/ubbu-ae-sobreposicao.md`) e no programa oficial (matematica.pt). Exigem CONTA, não reconhecimento.
 
-| # | Jogo | Domínio AE | O que treina |
-|---|---|---|---|
-| 6 | Fatias Certas | Números e Operações | frações como parte de um todo (½, ¾, ⅔…) |
-| 7 | A Feira | Números / Medida | dinheiro e decimais (compor um preço com moedas) |
-| 8 | A Horta Cercada | Geometria e Medida | perímetro numa grelha (traçar a cerca) |
-| 9 | Castelos na Areia | Álgebra | sequências de crescimento (tarefa oficial AE 4.º) |
-| 10 | O Gráfico da Turma | Org. e Tratamento de Dados | ler gráficos de barras |
+| # | Jogo | Domínio AE | O que treina | ⏱ |
+|---|---|---|---|---|
+| 6 | Fatias Certas | Números e Operações | **fração de uma quantidade** (¾ de 12 = 9): apanhar do conjunto | — |
+| 7 | A Feira | Números / Medida | **troco** com decimais, dois passos (paga − preço, compor o troco) | — |
+| 8 | A Horta Cercada | Geometria e Medida | **perímetro, área e inverso** (área→lado) com medidas | ✓ |
+| 9 | Castelos na Areia | Álgebra | sequências **×2 / quadrados / decrescentes** | ✓ |
+| 10 | O Gráfico da Turma | Org. e Tratamento de Dados | **pictograma com escala**, multipasso, fração do total | ✓ |
 
-Tema visual "mundo Buinho", mas contextos variados do quotidiano — não só
-biofabricação (decisão do Carlos, 24 Jul 2026).
+Dificuldade calibrada a pedido do Carlos ("fáceis demais para 9 anos"),
+olhando o Hypatiamat e o programa oficial. Os jogos 8–10 têm **cronómetro**
+com tempo limite por ronda (estilo Hypatiamat). Tema visual "mundo Buinho",
+mas contextos variados do quotidiano — não só biofabricação.
 
 ## Como correr
 

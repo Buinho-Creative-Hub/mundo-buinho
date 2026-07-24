@@ -18,11 +18,11 @@
     g3: { idx: 0, errado: null, aResolver: false },
     g4: { idx: 0, terminado: false },
     g5: { desafioIdx: 0, cor: '#6B8F3E', espessura: 8 },
-    g6: { idx: 0, pintadas: [], aResolver: false },      // índices de fatias pintadas
-    g7: { idx: 0, escolhidas: [], aResolver: false },    // índices do tabuleiro escolhidos
-    g8: { idx: 0, cercadas: {} },                        // arestas cercadas (chave -> true)
-    g9: { idx: 0, errado: null, aResolver: false },
-    g10: { idx: 0, errado: null, aResolver: false }
+    g6: { idx: 0, apanhadas: [], aResolver: false },     // índices de objectos apanhados (fração de quantidade)
+    g7: { idx: 0, escolhidas: [], aResolver: false },    // índices do tabuleiro escolhidos (troco)
+    g8: { idx: 0, errado: null, aResolver: false },      // MC: perímetro/área/inverso ⏱
+    g9: { idx: 0, errado: null, aResolver: false },      // MC: sequências ⏱
+    g10: { idx: 0, errado: null, aResolver: false }      // MC: gráficos ⏱
   });
 
   let S = estadoInicial();
@@ -209,12 +209,58 @@
     document.addEventListener('pointercancel', largar);
   }
 
+  // ---------------------------------------------------------- cronómetro
+  // Conta decrescente para os jogos-quiz (estilo Hypatiamat). Actualiza um
+  // elemento do DOM directamente (sem passar pelo ciclo de render, senão
+  // re-renderizava o ecrã 10x por segundo). Ao esgotar, chama aoEsgotar().
+  let _tId = null, _tFim = 0, _tDur = 0, _tCb = null, _tFrac = 1, _tSeg = 0;
+
+  function _pintarTimer() {
+    const bar = document.getElementById('timer-barra');
+    const num = document.getElementById('timer-num');
+    if (bar) {
+      bar.style.width = (_tFrac * 100).toFixed(1) + '%';
+      bar.style.background = _tFrac < 0.25 ? 'var(--laranja)' : (_tFrac < 0.5 ? 'var(--sol,#f6b93b)' : 'var(--verde)');
+    }
+    if (num) num.textContent = _tSeg + 's';
+  }
+
+  function iniciarTimer(segundos, aoEsgotar) {
+    pararTimer();
+    _tDur = segundos * 1000;
+    _tFim = Date.now() + _tDur;
+    _tCb = aoEsgotar;
+    _tFrac = 1; _tSeg = segundos;
+    _pintarTimer();
+    _tId = setInterval(() => {
+      const resta = Math.max(0, _tFim - Date.now());
+      _tFrac = _tDur ? resta / _tDur : 0;
+      _tSeg = Math.ceil(resta / 1000);
+      _pintarTimer();
+      if (resta <= 0) {
+        const cb = _tCb;        // capturar ANTES de pararTimer (que põe _tCb a null)
+        pararTimer();
+        if (cb) try { cb(); } catch (e) { /* nunca partir o jogo */ }
+      }
+    }, 100);
+  }
+
+  function pararTimer() {
+    if (_tId) { clearInterval(_tId); _tId = null; }
+    _tCb = null;
+  }
+
+  const timerFrac = () => _tFrac;
+  const timerSeg = () => _tSeg;
+  const timerActivo = () => _tId !== null;
+
   // ------------------------------------------------------------------ api
   global.MB = {
     estado, set, aoMudar, reiniciar, baralhar,
     sfx, ir, alternarSom, celebrar,
     pedirDica, avaliarDesenho, fecharMascote,
-    iniciarArrasto
+    iniciarArrasto,
+    iniciarTimer, pararTimer, timerFrac, timerSeg, timerActivo
   };
 
 })(window);

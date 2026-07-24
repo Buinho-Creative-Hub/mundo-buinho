@@ -467,54 +467,86 @@
     };
   }
 
-  // ---------------------------------------- Jogo 6 — Fatias Certas (frações)
+  // Barra de cronómetro (jogos-quiz com tempo). O núcleo pinta-a directamente.
+  function barraTempo() {
+    return `<div class="tempo">
+      <span class="tempo-icone">⏱</span>
+      <div class="tempo-fundo"><div id="timer-barra" class="tempo-barra" style="width:${(MB.timerFrac() * 100).toFixed(1)}%"></div></div>
+      <span id="timer-num" class="tempo-num">${MB.timerSeg()}s</span>
+    </div>`;
+  }
+
+  // Segundos por ronda em cada jogo cronometrado.
+  const TEMPO = { g8: 25, g9: 20, g10: 25 };
+
+  // Gere o arranque/paragem do cronómetro conforme o ecrã e a ronda actual.
+  let _tmEcra = null, _tmIdx = null;
+  function gerirTimer(S) {
+    const seg = TEMPO[S.ecra];
+    const idx = seg != null ? S[S.ecra].idx : null;
+    if (seg == null) {
+      if (_tmEcra) { MB.pararTimer(); _tmEcra = null; _tmIdx = null; }
+      return;
+    }
+    // se a ronda está resolvida (a celebrar) ou a mascote aberta, não reiniciar
+    if (S.ecra === _tmEcra && idx === _tmIdx) return;
+    _tmEcra = S.ecra; _tmIdx = idx;
+    MB.iniciarTimer(seg, () => aoEsgotarTempo(S.ecra));
+  }
+
+  function aoEsgotarTempo(ecra) {
+    MB.sfx.errado();
+    MB.set({ mascote: { aberta: true, aCarregar: false, texto: '⏰ Acabou o tempo! Mas podes responder na mesma. 🌱' } });
+  }
+
+  // ---------------------------------------- Jogo 6 — Fatias Certas (fração de quantidade)
+  // A criança tem de APANHAR num/den do conjunto: exige calcular total/den*num.
   function vistaG6() {
     const S = MB.estado();
     const p = D.g6[S.g6.idx] || D.g6[0];
-    const pintadas = S.g6.pintadas;
-    const fatias = Array.from({ length: p.partes }).map((_, i) => {
-      const on = pintadas.indexOf(i) >= 0;
-      return `<button class="fatia ${on ? 'pintada' : ''}" data-accao="g6-fatia" data-i="${i}"
-               aria-label="Fatia ${i + 1}"${on ? ' aria-pressed="true"' : ''}></button>`;
+    const apanhadas = S.g6.apanhadas;
+    const objectos = Array.from({ length: p.total }).map((_, i) => {
+      const on = apanhadas.indexOf(i) >= 0;
+      return `<button class="fruto ${on ? 'apanhado' : ''}" data-accao="g6-apanhar" data-i="${i}"
+               aria-label="Objecto ${i + 1}"${on ? ' aria-pressed="true"' : ''}>${p.icone}</button>`;
     }).join('');
     const pontos = D.g6.map((_, i) =>
       `<span class="ponto ${i < S.g6.idx ? 'feito' : ''} ${i === S.g6.idx ? 'actual' : ''}"></span>`).join('');
     return `${topo('Fatias Certas', 'Problema ' + (S.g6.idx + 1) + ' de ' + D.g6.length, true)}
       <div class="painel">
-        <p class="enunciado">${esc(p.icone)} ${esc(p.enunciado)}</p>
-        <div class="fracao-alvo">${esc(p.rotulo)}</div>
-        <div class="barra-fatias" style="grid-template-columns:repeat(${p.partes},1fr)">${fatias}</div>
-        <p class="contador">Pintaste ${pintadas.length} de ${p.partes}</p>
+        <p class="enunciado">Apanha <span class="fracao-inline">${esc(p.rotulo)}</span> dos ${p.total} ${esc(p.nome)}</p>
+        <div class="cesto">${objectos}</div>
+        <p class="contador">Apanhaste <b>${apanhadas.length}</b> ${esc(p.nome)}</p>
         <button class="botao verde" data-accao="g6-verificar">Verificar</button>
         <button class="botao-pequeno" data-accao="g6-ajuda" style="width:100%;margin-top:10px">Preciso de ajuda 🌱</button>
         <div class="pontos">${pontos}</div>
       </div>`;
   }
 
-  function g6Fatia(i) {
+  function g6Apanhar(i) {
     const S = MB.estado();
     if (S.g6.aResolver) return;
     MB.sfx.toque();
     MB.set(s => {
-      const set = s.g6.pintadas.slice();
+      const set = s.g6.apanhadas.slice();
       const j = set.indexOf(i);
       if (j >= 0) set.splice(j, 1); else set.push(i);
-      return { g6: Object.assign({}, s.g6, { pintadas: set }) };
+      return { g6: Object.assign({}, s.g6, { apanhadas: set }) };
     });
   }
 
   function g6Verificar() {
     const S = MB.estado();
     const p = D.g6[S.g6.idx];
-    if (S.g6.pintadas.length === p.num) {
-      MB.celebrar('🍰', 'Fração certa!');
+    if (S.g6.apanhadas.length === p.resposta) {
+      MB.celebrar('🧺', 'Certo! ' + p.rotulo + ' de ' + p.total + ' = ' + p.resposta);
       MB.set(s => ({ g6: Object.assign({}, s.g6, { aResolver: true }) }));
-      setTimeout(() => MB.set(avancar('g6', () => ({ idx: MB.estado().g6.idx + 1, pintadas: [], aResolver: false }))), 900);
+      setTimeout(() => MB.set(avancar('g6', () => ({ idx: MB.estado().g6.idx + 1, apanhadas: [], aResolver: false }))), 1100);
     } else {
       MB.sfx.errado();
-      MB.pedirDica('No jogo Fatias Certas, o desafio é "' + p.enunciado + '" (fração ' + p.rotulo +
-        '). A criança pintou ' + S.g6.pintadas.length + ' de ' + p.partes +
-        ' fatias. Dá uma pista curta: o número de cima da fração diz quantas fatias pintar. Não digas o número.');
+      MB.pedirDica('No jogo Fatias Certas é preciso apanhar ' + p.rotulo + ' de ' + p.total + ' ' + p.nome +
+        '. A criança apanhou ' + S.g6.apanhadas.length + '. Dá uma pista curta: divide os ' + p.total +
+        ' em ' + p.den + ' grupos iguais e vê quantos há em ' + p.num + ' grupos. Não digas o resultado.');
     }
   }
 
@@ -535,10 +567,12 @@
       `<span class="ponto ${i < S.g7.idx ? 'feito' : ''} ${i === S.g7.idx ? 'actual' : ''}"></span>`).join('');
     return `${topo('A Feira', 'Compra ' + (S.g7.idx + 1) + ' de ' + D.g7.length, true)}
       <div class="painel">
-        <p class="enunciado">${esc(p.icone)} Paga ${esc(p.produto)} — custa <b>${euros(p.alvo)}</b></p>
-        <div class="carteira">Na tua mão: <b>${euros(total)}</b></div>
+        <p class="enunciado">${esc(p.icone)} ${esc(p.produto[0].toUpperCase() + p.produto.slice(1))} custa <b>${euros(p.preco)}</b>.
+          Pagas com <b>${euros(p.paga)}</b>.</p>
+        <p class="troco-pergunta">Dá o <b>troco</b> certo com as moedas 👇</p>
+        <div class="carteira">Troco na tua mão: <b>${euros(total)}</b></div>
         <div class="moedas">${moedas}</div>
-        <button class="botao verde" data-accao="g7-pagar" style="margin-top:16px">Pagar</button>
+        <button class="botao verde" data-accao="g7-pagar" style="margin-top:16px">Dar o troco</button>
         <div style="display:flex;gap:10px;margin-top:10px">
           <button class="botao-pequeno" data-accao="g7-limpar" style="flex:1">Limpar</button>
           <button class="botao-pequeno" data-accao="g7-ajuda" style="flex:1">Ajuda 🌱</button>
@@ -565,104 +599,79 @@
     const S = MB.estado();
     const p = D.g7[S.g7.idx];
     const total = S.g7.escolhidas.reduce((sum, i) => sum + p.tabuleiro[i], 0);
-    if (total === p.alvo) {
-      MB.celebrar('🪙', 'Certo!');
+    if (total === p.troco) {
+      MB.celebrar('🪙', 'Troco certo! ' + euros(p.troco));
       MB.set(s => ({ g7: Object.assign({}, s.g7, { aResolver: true }) }));
-      setTimeout(() => MB.set(avancar('g7', () => ({ idx: MB.estado().g7.idx + 1, escolhidas: [], aResolver: false }))), 900);
+      setTimeout(() => MB.set(avancar('g7', () => ({ idx: MB.estado().g7.idx + 1, escolhidas: [], aResolver: false }))), 1000);
     } else {
       MB.sfx.errado();
-      const dir = total > p.alvo ? 'a mais' : 'a menos';
-      MB.pedirDica('No jogo A Feira, é preciso pagar exactamente ' + euros(p.alvo) + '. A criança juntou ' +
-        euros(total) + ', que é ' + dir + '. Dá uma pista curta para trocar ou juntar moedas, sem dizeres a combinação.');
+      const dir = total > p.troco ? 'a mais' : 'a menos';
+      MB.pedirDica('No jogo A Feira, o troco de ' + euros(p.paga) + ' menos ' + euros(p.preco) +
+        ' tem de ser dado em moedas. A criança juntou ' + euros(total) + ', que é ' + dir +
+        '. Dá uma pista curta: primeiro descobre quanto é o troco (o que pagou menos o preço), depois junta moedas até lá. Não digas o valor.');
     }
   }
 
-  // -------------------------------------- Jogo 8 — A Horta Cercada (perímetro)
-  // Arestas exteriores da forma (vizinho ausente). Cada aresta = 1 metro de cerca.
-  function arestasExteriores(cells) {
-    const set = new Set(cells.map(c => c[0] + ',' + c[1]));
-    const arr = [];
-    const add = (x1, y1, x2, y2) => arr.push({ k: x1 + ',' + y1 + '_' + x2 + ',' + y2, x1, y1, x2, y2 });
-    for (const cell of cells) {
-      const c = cell[0], r = cell[1];
-      if (!set.has((c - 1) + ',' + r)) add(c, r, c, r + 1);       // esquerda
-      if (!set.has((c + 1) + ',' + r)) add(c + 1, r, c + 1, r + 1); // direita
-      if (!set.has(c + ',' + (r - 1))) add(c, r, c + 1, r);       // cima
-      if (!set.has(c + ',' + (r + 1))) add(c, r + 1, c + 1, r + 1); // baixo
-    }
-    return arr;
-  }
-
+  // -------------------------------------- Jogo 8 — A Horta Cercada (perímetro/área/inverso ⏱)
+  // Desenha um retângulo com medidas e faz uma pergunta de escolha múltipla.
   function vistaG8() {
     const S = MB.estado();
     const p = D.g8[S.g8.idx] || D.g8[0];
-    const cells = p.cells;
-    const cols = cells.map(c => c[0]), rows = cells.map(c => c[1]);
-    const minc = Math.min.apply(null, cols), maxc = Math.max.apply(null, cols);
-    const minr = Math.min.apply(null, rows), maxr = Math.max.apply(null, rows);
-    const CELL = 52, PAD = 18;
-    const W = (maxc - minc + 1) * CELL + PAD * 2, H = (maxr - minr + 1) * CELL + PAD * 2;
-    const gx = c => (c - minc) * CELL + PAD, gy = r => (r - minr) * CELL + PAD;
-    const quadrados = cells.map(cell =>
-      `<rect x="${gx(cell[0])}" y="${gy(cell[1])}" width="${CELL}" height="${CELL}" rx="4"
-             fill="#e7efd9" stroke="#c9d8b3" stroke-width="1.5"/>`).join('');
-    const cercadas = S.g8.cercadas;
-    const linhas = arestasExteriores(cells).map(a => {
-      const on = !!cercadas[a.k];
-      const x1 = gx(a.x1), y1 = gy(a.y1), x2 = gx(a.x2), y2 = gy(a.y2);
-      return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${on ? '#FA6415' : '#C3BAA3'}"
-                stroke-width="${on ? 8 : 3}" stroke-linecap="round" ${on ? '' : 'stroke-dasharray="2 7"'}/>
-              <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="transparent" stroke-width="26"
-                stroke-linecap="round" data-accao="g8-aresta" data-k="${a.k}" style="cursor:pointer"/>`;
+    const inverso = p.tipo === 'inv-lado' || p.tipo === 'inv-perim';
+    // escala do desenho (proporcional, com limites)
+    const escala = Math.min(200 / p.comp, 130 / p.larg, 30);
+    const W = p.comp * escala, H = p.larg * escala, PAD = 40;
+    const svgW = W + PAD * 2, svgH = H + PAD * 2;
+    let grelha = '';
+    if (p.tipo === 'area') {
+      for (let c = 1; c < p.comp; c++) grelha += `<line x1="${PAD + c * escala}" y1="${PAD}" x2="${PAD + c * escala}" y2="${PAD + H}" stroke="#c9d8b3" stroke-width="1"/>`;
+      for (let r = 1; r < p.larg; r++) grelha += `<line x1="${PAD}" y1="${PAD + r * escala}" x2="${PAD + W}" y2="${PAD + r * escala}" stroke="#c9d8b3" stroke-width="1"/>`;
+    }
+    const labelLarg = inverso ? '?' : (p.larg + ' m');
+    const svg = `<svg viewBox="0 0 ${svgW} ${svgH}" class="horta-svg" style="max-width:${svgW}px;width:100%" aria-label="Retângulo da horta">
+        <rect x="${PAD}" y="${PAD}" width="${W}" height="${H}" rx="6" fill="#e7efd9" stroke="var(--verde)" stroke-width="3"/>
+        ${grelha}
+        <text x="${PAD + W / 2}" y="${PAD + H + 26}" text-anchor="middle" class="medida">${p.comp} m</text>
+        <text x="${PAD - 16}" y="${PAD + H / 2}" text-anchor="middle" class="medida ${inverso ? 'medida-incognita' : ''}" transform="rotate(-90 ${PAD - 16} ${PAD + H / 2})">${labelLarg}</text>
+      </svg>`;
+    const opcoes = p.opcoes.map(v => {
+      const errado = S.g8.errado === v;
+      return `<button class="botao ${errado ? 'errado' : ''}" data-accao="g8-resp" data-v="${v}">${v}</button>`;
     }).join('');
-    const feitas = Object.keys(cercadas).filter(k => cercadas[k]).length;
     const pontos = D.g8.map((_, i) =>
       `<span class="ponto ${i < S.g8.idx ? 'feito' : ''} ${i === S.g8.idx ? 'actual' : ''}"></span>`).join('');
-    const nomeCap = p.nome.charAt(0).toUpperCase() + p.nome.slice(1);
-    return `${topo('A Horta Cercada', nomeCap + ' · horta ' + (S.g8.idx + 1) + ' de ' + D.g8.length, true)}
+    return `${topo('A Horta Cercada', 'Horta ' + (S.g8.idx + 1) + ' de ' + D.g8.length, true)}
       <div class="painel">
-        <p class="enunciado">Põe cerca à volta de toda a horta. Toca em cada lado!</p>
-        <div style="display:flex;justify-content:center">
-          <svg viewBox="0 0 ${W} ${H}" class="horta-svg" style="max-width:${W}px;width:100%" aria-label="Grelha da horta">${quadrados}${linhas}</svg>
-        </div>
-        <p class="contador">Cerca: <b>${feitas}</b> metros ${feitas === p.perimetro ? '✅' : ''}</p>
-        <button class="botao verde" data-accao="g8-verificar">A cerca está pronta!</button>
-        <div style="display:flex;gap:10px;margin-top:10px">
-          <button class="botao-pequeno" data-accao="g8-limpar" style="flex:1">Recomeçar</button>
-          <button class="botao-pequeno" data-accao="g8-ajuda" style="flex:1">Ajuda 🌱</button>
-        </div>
+        ${barraTempo()}
+        <p class="enunciado">${esc(p.pergunta)}</p>
+        <div style="display:flex;justify-content:center;margin-bottom:10px">${svg}</div>
+        <div class="grelha grelha-2">${opcoes}</div>
+        <button class="botao-pequeno" data-accao="g8-ajuda" style="width:100%;margin-top:12px">Preciso de ajuda 🌱</button>
         <div class="pontos">${pontos}</div>
       </div>`;
   }
 
-  function g8Aresta(k) {
-    const S = MB.estado();
-    if (S.g8.aResolver) return;
-    MB.sfx.toque();
-    MB.set(s => {
-      const m = Object.assign({}, s.g8.cercadas);
-      if (m[k]) delete m[k]; else m[k] = true;
-      return { g8: Object.assign({}, s.g8, { cercadas: m }) };
-    });
+  function g8Dica(p) {
+    if (p.tipo === 'perimetro') return 'soma o comprimento e a largura e depois o dobro (dá a volta toda)';
+    if (p.tipo === 'area') return 'conta os quadradinhos: comprimento vezes largura';
+    if (p.tipo === 'inv-lado') return 'que número vezes ' + p.comp + ' dá a área?';
+    return 'metade da cerca é um comprimento mais uma largura';
   }
 
-  function g8Limpar() { MB.sfx.toque(); MB.set(s => ({ g8: Object.assign({}, s.g8, { cercadas: {} }) })); }
-
-  function g8Verificar() {
+  function g8Responder(v) {
     const S = MB.estado();
+    if (S.g8.aResolver) return;
     const p = D.g8[S.g8.idx];
-    const arestas = arestasExteriores(p.cells);
-    const feitas = Object.keys(S.g8.cercadas).filter(k => S.g8.cercadas[k]).length;
-    const todas = arestas.every(a => S.g8.cercadas[a.k]);
-    if (todas && feitas === p.perimetro) {
-      MB.celebrar('📏', 'Perímetro ' + p.perimetro + ' m!');
-      MB.set(s => ({ g8: Object.assign({}, s.g8, { aResolver: true }) }));
-      setTimeout(() => MB.set(avancar('g8', () => ({ idx: MB.estado().g8.idx + 1, cercadas: {}, aResolver: false }))), 1000);
+    if (v === p.resposta) {
+      MB.pararTimer();
+      MB.celebrar('📐', 'Certo! ' + p.resposta);
+      MB.set(s => ({ g8: Object.assign({}, s.g8, { aResolver: true, errado: null }) }));
+      setTimeout(() => MB.set(avancar('g8', () => ({ idx: MB.estado().g8.idx + 1, errado: null, aResolver: false }))), 900);
     } else {
       MB.sfx.errado();
-      const faltam = p.perimetro - feitas;
-      MB.pedirDica('No jogo A Horta Cercada, é preciso cercar toda a volta da horta. Faltam ' +
-        (faltam > 0 ? faltam + ' lado(s)' : 'seguir a volta toda') + '. Dá uma pista curta para a criança seguir a volta toda, lado a lado, sem dizer o número.');
+      MB.set(s => ({ g8: Object.assign({}, s.g8, { errado: v }) }));
+      MB.pedirDica('No jogo A Horta Cercada: "' + p.pergunta + '". A criança respondeu ' + v +
+        ', que está errado. Dá uma pista curta — ' + g8Dica(p) + ' — sem dares o resultado.');
     }
   }
 
@@ -687,6 +696,7 @@
       `<span class="ponto ${i < S.g9.idx ? 'feito' : ''} ${i === S.g9.idx ? 'actual' : ''}"></span>`).join('');
     return `${topo('Castelos na Areia', 'Castelo ' + (S.g9.idx + 1) + ' de ' + D.g9.length, true)}
       <div class="painel">
+        ${barraTempo()}
         <p class="enunciado">Os castelos crescem. Quantos blocos tem o próximo?</p>
         <div class="castelos">${barras}</div>
         <div class="grelha grelha-2">${opcoes}</div>
@@ -700,6 +710,7 @@
     if (S.g9.aResolver) return;
     const p = D.g9[S.g9.idx];
     if (v === p.resposta) {
+      MB.pararTimer();
       MB.celebrar('🏰', 'Certo!');
       MB.set(s => ({ g9: Object.assign({}, s.g9, { aResolver: true, errado: null }) }));
       setTimeout(() => MB.set(avancar('g9', () => ({ idx: MB.estado().g9.idx + 1, errado: null, aResolver: false }))), 900);
@@ -711,20 +722,36 @@
     }
   }
 
-  // -------------------------------------- Jogo 10 — O Gráfico da Turma (gráficos)
+  // -------------------------------------- Jogo 10 — O Gráfico da Turma (dados ⏱)
   function vistaG10() {
     const S = MB.estado();
     const p = D.g10[S.g10.idx] || D.g10[0];
-    const maxv = Math.max.apply(null, p.dados.map(d => d[1]).concat([1]));
     const cores = ['#2038A6', '#FA6415', '#6B8F3E', '#f6b93b'];
-    const barras = p.dados.map((d, i) => {
-      const h = Math.round(10 + (d[1] / maxv) * 132);
-      return `<div class="graf-col">
-        <div class="graf-val">${d[1]}</div>
-        <div class="graf-bar" style="height:${h}px;background:${cores[i % cores.length]}"></div>
-        <div class="graf-rot">${esc(d[0])}</div>
+    let grafico;
+    if (p.modo === 'pictograma') {
+      // cada símbolo = escala votos; ler a escala é parte do desafio
+      const linhas = p.dados.map((d, i) => {
+        const simbolos = Array.from({ length: d[1] }).map(() => `<span class="pic-simb">${esc(p.icone)}</span>`).join('');
+        return `<div class="pic-linha">
+          <span class="pic-rot">${esc(d[0])}</span>
+          <span class="pic-simbolos">${simbolos}</span>
+        </div>`;
+      }).join('');
+      grafico = `<div class="pictograma">${linhas}
+        <div class="pic-legenda">${esc(p.icone)} = ${p.escala} ${esc(p.unidade)}</div>
       </div>`;
-    }).join('');
+    } else {
+      const maxv = Math.max.apply(null, p.dados.map(d => d[1]).concat([1]));
+      const barras = p.dados.map((d, i) => {
+        const h = Math.round(10 + (d[1] / maxv) * 128);
+        return `<div class="graf-col">
+          <div class="graf-val">${d[1]}</div>
+          <div class="graf-bar" style="height:${h}px;background:${cores[i % cores.length]}"></div>
+          <div class="graf-rot">${esc(d[0])}</div>
+        </div>`;
+      }).join('');
+      grafico = `<div class="grafico">${barras}</div>`;
+    }
     const opcoes = p.opcoes.map(v => {
       const errado = String(S.g10.errado) === String(v);
       return `<button class="botao ${errado ? 'errado' : ''}" data-accao="g10-resp" data-v="${esc(String(v))}">${esc(String(v))}</button>`;
@@ -733,8 +760,9 @@
       `<span class="ponto ${i < S.g10.idx ? 'feito' : ''} ${i === S.g10.idx ? 'actual' : ''}"></span>`).join('');
     return `${topo('O Gráfico da Turma', 'Gráfico ' + (S.g10.idx + 1) + ' de ' + D.g10.length, true)}
       <div class="painel">
+        ${barraTempo()}
         <p class="graf-titulo">${esc(p.icone)} ${esc(p.titulo)} <span>(${esc(p.unidade)})</span></p>
-        <div class="grafico">${barras}</div>
+        ${grafico}
         <p class="enunciado" style="font-size:18px">${esc(p.pergunta)}</p>
         <div class="grelha grelha-2">${opcoes}</div>
         <button class="botao-pequeno" data-accao="g10-ajuda" style="width:100%;margin-top:14px">Preciso de ajuda 🌱</button>
@@ -747,6 +775,7 @@
     if (S.g10.aResolver) return;
     const p = D.g10[S.g10.idx];
     if (String(v) === String(p.resposta)) {
+      MB.pararTimer();
       MB.celebrar('📊', 'Certo!');
       MB.set(s => ({ g10: Object.assign({}, s.g10, { aResolver: true, errado: null }) }));
       setTimeout(() => MB.set(avancar('g10', () => ({ idx: MB.estado().g10.idx + 1, errado: null, aResolver: false }))), 900);
@@ -820,6 +849,9 @@
       }
     }
 
+    // cronómetro dos jogos-quiz: arranca/pára conforme o ecrã e a ronda
+    gerirTimer(S);
+
     _ecraAnterior = S.ecra;
   }
 
@@ -882,35 +914,33 @@
           break;
         case 'g5-mostrar': g5Mostrar(); break;
 
-        // ---- Jogo 6 — Fatias Certas (frações)
-        case 'g6-fatia': g6Fatia(+el.dataset.i); break;
+        // ---- Jogo 6 — Fatias Certas (fração de uma quantidade)
+        case 'g6-apanhar': g6Apanhar(+el.dataset.i); break;
         case 'g6-verificar': g6Verificar(); break;
         case 'g6-ajuda': {
           const p = D.g6[MB.estado().g6.idx];
-          MB.pedirDica('A criança pediu ajuda no jogo Fatias Certas (pintar a fração ' + p.rotulo +
-            '). Dá uma pista curta: o número de cima da fração diz quantas fatias pintar. Não digas o número.');
+          MB.pedirDica('A criança pediu ajuda no jogo Fatias Certas: apanhar ' + p.rotulo + ' de ' + p.total + ' ' + p.nome +
+            '. Dá uma pista curta: divide os ' + p.total + ' em ' + p.den + ' grupos iguais e apanha ' + p.num + ' grupos. Não digas o resultado.');
           break;
         }
 
-        // ---- Jogo 7 — A Feira (dinheiro/decimais)
+        // ---- Jogo 7 — A Feira (troco / decimais)
         case 'g7-moeda': g7Moeda(+el.dataset.i); break;
         case 'g7-pagar': g7Pagar(); break;
         case 'g7-limpar': g7Limpar(); break;
         case 'g7-ajuda': {
           const p = D.g7[MB.estado().g7.idx];
-          MB.pedirDica('A criança pediu ajuda no jogo A Feira. Tem de pagar exactamente ' + euros(p.alvo) +
-            ' com moedas. Dá uma pista curta para juntar moedas até ao preço, sem dizeres a combinação.');
+          MB.pedirDica('A criança pediu ajuda no jogo A Feira. Tem de dar o troco de ' + euros(p.paga) + ' menos ' +
+            euros(p.preco) + '. Dá uma pista curta: primeiro descobre quanto é o troco, depois junta moedas até lá. Não digas o valor.');
           break;
         }
 
-        // ---- Jogo 8 — A Horta Cercada (perímetro)
-        case 'g8-aresta': g8Aresta(el.dataset.k); break;
-        case 'g8-verificar': g8Verificar(); break;
-        case 'g8-limpar': g8Limpar(); break;
+        // ---- Jogo 8 — A Horta Cercada (perímetro/área/inverso)
+        case 'g8-resp': g8Responder(+el.dataset.v); break;
         case 'g8-ajuda': {
           const p = D.g8[MB.estado().g8.idx];
-          MB.pedirDica('A criança pediu ajuda no jogo A Horta Cercada (contar o perímetro da horta "' + p.nome +
-            '"). Dá uma pista curta para seguir a volta toda da horta, lado a lado, sem dizeres o número.');
+          MB.pedirDica('A criança pediu ajuda no jogo A Horta Cercada: "' + p.pergunta +
+            '". Dá uma pista curta — ' + g8Dica(p) + ' — sem dares o resultado.');
           break;
         }
 

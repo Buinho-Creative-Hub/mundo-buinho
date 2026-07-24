@@ -9,18 +9,21 @@
    Regra selada: proporção sempre pela ÁGUA. Fonte canónica Ocloya/Materiom §6.
    Enquanto não houver validação, isto é protótipo — não material didáctico.
 
-   ── JOGOS 6–10 (Matemática 4.º ano) ────────────────────────────────────────
-   Ancorados nas Aprendizagens Essenciais de Matemática do 4.º ano (ver
-   strategy/ubbu-ae-sobreposicao.md): Números e Operações (frações, decimais),
-   Geometria e Medida (perímetro), Álgebra (sequências de crescimento —
-   'Castelos na Areia' é tarefa oficial AE do 4.º) e Organização e Tratamento
-   de Dados (gráficos). Visual "mundo Buinho" mas contextos variados do
-   quotidiano (não só biofabricação) — decisão do Carlos, 24 Jul.
-   TODA a matemática destes 5 jogos está verificada em código por
-   testes/verificar-matematica.js. Os NÚMEROS não dependem da memória do modelo.
-   🟡 Pendente Magalhães: validar o ENQUADRAMENTO pedagógico (progressão de
-   dificuldade, redacção dos enunciados). A correcção matemática está garantida;
-   a afinação didáctica é da área dele. */
+   ── JOGOS 6–10 (Matemática 4.º ano — nível EXIGENTE) ────────────────────────
+   Ancorados nas AE de Matemática do 4.º ano (strategy/ubbu-ae-sobreposicao.md)
+   e no programa oficial (matematica.pt): exigem CONTA a sério, não reconhecimento.
+   - 6 Fatias Certas: fração de uma QUANTIDADE (¾ de 12 = 9), apanhar do conjunto
+   - 7 A Feira: TROCO com decimais (dois passos: paga−preço, compor o troco)
+   - 8 A Horta Cercada: perímetro, ÁREA e INVERSO (área→lado) ⏱ cronómetro
+   - 9 Castelos na Areia: sequências ×2 / quadrados / decrescente ⏱ cronómetro
+   - 10 O Gráfico da Turma: pictograma com ESCALA, multipasso, fração do total ⏱
+   Visual "mundo Buinho", contextos variados do quotidiano (não só biofabricação)
+   — decisão do Carlos, 24 Jul. Dificuldade calibrada a pedido do Carlos ("fáceis
+   demais para 9 anos") olhando o Hypatiamat + programa oficial.
+   TODA a matemática verificada em testes/verificar-matematica.js. Os NÚMEROS não
+   dependem da memória do modelo.
+   🟡 Pendente Magalhães: validar o ENQUADRAMENTO pedagógico (progressão,
+   redacção, tempos do cronómetro). A correcção matemática está garantida. */
 
 window.MB_DADOS = {
 
@@ -79,69 +82,71 @@ window.MB_DADOS = {
   // =========================================================================
 
   // ------------------------------------------------- Jogo 6 — Fatias Certas
-  // Frações como parte de um todo: pintar `num` de `partes` fatias iguais.
+  // FRAÇÃO DE UMA QUANTIDADE: apanhar (num/den) de `total` objectos.
+  // resposta = total/den*num (inteiro). Exige contas, não reconhecimento.
   g6: [
-    { rotulo: '1/2', enunciado: 'Pinta metade do chocolate.',       icone: '🍫', partes: 2, num: 1 },
-    { rotulo: '3/4', enunciado: 'Pinta três quartos do bolo.',       icone: '🍰', partes: 4, num: 3 },
-    { rotulo: '2/3', enunciado: 'Pinta dois terços da fita.',        icone: '🎀', partes: 3, num: 2 },
-    { rotulo: '5/6', enunciado: 'Pinta cinco sextos da barra.',      icone: '🟩', partes: 6, num: 5 },
-    { rotulo: '3/8', enunciado: 'Pinta três oitavos da melancia.',   icone: '🍉', partes: 8, num: 3 }
+    { rotulo: '1/2', num: 1, den: 2, total: 8,  resposta: 4,  icone: '🍓', nome: 'morangos' },
+    { rotulo: '3/4', num: 3, den: 4, total: 12, resposta: 9,  icone: '🍎', nome: 'maçãs' },
+    { rotulo: '2/3', num: 2, den: 3, total: 15, resposta: 10, icone: '🥚', nome: 'ovos' },
+    { rotulo: '4/5', num: 4, den: 5, total: 10, resposta: 8,  icone: '🌰', nome: 'castanhas' },
+    { rotulo: '3/8', num: 3, den: 8, total: 16, resposta: 6,  icone: '🫐', nome: 'mirtilos' }
   ],
 
   // -------------------------------------------------------- Jogo 7 — A Feira
-  // Dinheiro e decimais: escolher moedas (em cêntimos) que somam o preço.
+  // DAR O TROCO (dois passos): troco = paga - preço; compor o troco com moedas.
   g7: [
-    { produto: 'o pão',    icone: '🥖', alvo: 180, tabuleiro: [100, 50, 20, 10, 20] },
-    { produto: 'a maçã',   icone: '🍎', alvo: 70,  tabuleiro: [50, 20, 10, 20, 5]  },
-    { produto: 'o queijo', icone: '🧀', alvo: 250, tabuleiro: [200, 50, 20, 50, 10] },
-    { produto: 'o sumo',   icone: '🧃', alvo: 125, tabuleiro: [100, 20, 5, 10, 50] },
-    { produto: 'o mel',    icone: '🍯', alvo: 340, tabuleiro: [200, 100, 20, 20, 50] }
+    { produto: 'o pão',    icone: '🥖', preco: 125, paga: 200, troco: 75,  tabuleiro: [50, 20, 5, 10, 20] },
+    { produto: 'a maçã',   icone: '🍎', preco: 70,  paga: 100, troco: 30,  tabuleiro: [20, 10, 5, 20, 50] },
+    { produto: 'o queijo', icone: '🧀', preco: 340, paga: 500, troco: 160, tabuleiro: [100, 50, 10, 20, 50] },
+    { produto: 'o sumo',   icone: '🧃', preco: 250, paga: 300, troco: 50,  tabuleiro: [20, 20, 10, 50, 5] },
+    { produto: 'o mel',    icone: '🍯', preco: 180, paga: 200, troco: 20,  tabuleiro: [10, 5, 20, 5, 10] }
   ],
 
   // ------------------------------------------------- Jogo 8 — A Horta Cercada
-  // Perímetro numa grelha: cada aresta exterior = 1 metro de cerca.
-  // `perimetro` recomputado por 2 métodos em testes/verificar-matematica.js.
+  // PERÍMETRO, ÁREA e INVERSO em retângulos com medidas (⏱ com cronómetro).
+  // tipo: perimetro | area | inv-lado | inv-perim. resposta verificada no teste.
   g8: [
-    { nome: 'o canteiro quadrado', cells: [[0,0],[1,0],[0,1],[1,1]],                                     perimetro: 8  },
-    { nome: 'a fila de couves',    cells: [[0,0],[1,0],[2,0],[3,0]],                                     perimetro: 10 },
-    { nome: 'a horta grande',      cells: [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1],[0,2],[1,2],[2,2]],       perimetro: 12 },
-    { nome: 'o canteiro em L',     cells: [[0,0],[0,1],[0,2],[1,2],[2,2]],                               perimetro: 12 },
-    { nome: 'a horta em cruz',     cells: [[1,0],[0,1],[1,1],[2,1],[1,2]],                               perimetro: 12 }
+    { tipo: 'perimetro', comp: 7, larg: 4,           resposta: 22, opcoes: [21, 22, 24, 23], pergunta: 'Quantos metros de cerca?' },
+    { tipo: 'area',      comp: 6, larg: 4,           resposta: 24, opcoes: [23, 24, 26, 25], pergunta: 'Quantos quadrados de terra (m²)?' },
+    { tipo: 'area',      comp: 8, larg: 3,           resposta: 24, opcoes: [25, 23, 24, 26], pergunta: 'Quantos quadrados de terra (m²)?' },
+    { tipo: 'inv-lado',  comp: 5, larg: 4, area: 20, resposta: 4,  opcoes: [5, 3, 4, 6],     pergunta: 'A horta tem 20 m² e 5 m de comprimento. Qual é a largura?' },
+    { tipo: 'inv-perim', comp: 6, larg: 3, perim: 18, resposta: 3, opcoes: [4, 2, 3, 5],     pergunta: 'A cerca mede 18 m e o comprimento é 6 m. Qual é a largura?' }
   ],
 
   // -------------------------------------------- Jogo 9 — Castelos na Areia
-  // Sequências de crescimento (tarefa oficial AE 4.º): dá o próximo termo.
+  // SEQUÊNCIAS (⏱ com cronómetro): ×2, quadrados, decrescente, saltos que crescem.
   g9: [
-    { termos: [2, 4, 6, 8],    resposta: 10, opcoes: [10, 12, 9, 11],  pista: 'de 2 em 2' },
-    { termos: [3, 6, 9, 12],   resposta: 15, opcoes: [14, 15, 17, 16], pista: 'de 3 em 3' },
-    { termos: [5, 10, 15, 20], resposta: 25, opcoes: [26, 24, 25, 27], pista: 'de 5 em 5' },
-    { termos: [1, 3, 5, 7],    resposta: 9,  opcoes: [10, 8, 11, 9],   pista: 'só os ímpares' },
-    { termos: [1, 3, 6, 10],   resposta: 15, opcoes: [16, 15, 14, 17], pista: 'o salto cresce: +2, +3, +4...' }
+    { termos: [2, 4, 8, 16],    resposta: 32, opcoes: [30, 32, 36, 34], pista: 'cada um é o dobro do anterior' },
+    { termos: [1, 4, 9, 16],    resposta: 25, opcoes: [23, 25, 29, 27], pista: 'são os quadrados: 1×1, 2×2, 3×3...' },
+    { termos: [50, 45, 40, 35], resposta: 30, opcoes: [32, 30, 34, 28], pista: 'desce de 5 em 5' },
+    { termos: [1, 2, 4, 7, 11], resposta: 16, opcoes: [18, 16, 20, 14], pista: 'o salto cresce: +1, +2, +3, +4...' },
+    { termos: [3, 6, 12, 24],   resposta: 48, opcoes: [46, 48, 52, 50], pista: 'cada um é o dobro do anterior' }
   ],
 
   // --------------------------------------------- Jogo 10 — O Gráfico da Turma
-  // Ler um gráfico de barras. `resposta` recomputada dos dados no teste.
+  // DADOS (⏱ com cronómetro): pictograma com escala, multipasso, fração do total.
+  // resposta recomputada dos dados em testes/verificar-matematica.js.
   g10: [
-    { titulo: 'Fruta preferida da turma', unidade: 'votos', icone: '🍓',
-      dados: [['Maçã', 6], ['Banana', 9], ['Laranja', 4], ['Uva', 3]],
-      pergunta: 'Qual foi a fruta mais votada?', resposta: 'Banana',
-      opcoes: ['Maçã', 'Banana', 'Laranja', 'Uva'] },
-    { titulo: 'Livros lidos por mês', unidade: 'livros', icone: '📚',
-      dados: [['Jan', 5], ['Fev', 8], ['Mar', 6], ['Abr', 3]],
-      pergunta: 'Quantos livros a mais em Fevereiro do que em Abril?', resposta: 5,
-      opcoes: [6, 5, 7, 3] },
-    { titulo: 'Golos por equipa', unidade: 'golos', icone: '⚽',
+    { titulo: 'Fruta preferida', modo: 'pictograma', escala: 2, unidade: 'votos', icone: '🍎',
+      dados: [['Maçã', 3], ['Banana', 4], ['Pera', 2]],
+      pergunta: 'Cada 🍎 vale 2 votos. Quantos votos teve a Banana?', resposta: 8,
+      opcoes: [9, 8, 10, 7] },
+    { titulo: 'Golos por equipa', modo: 'barras', unidade: 'golos', icone: '⚽',
       dados: [['Azuis', 7], ['Verdes', 4], ['Vermelhos', 5]],
-      pergunta: 'Quantos golos foram marcados ao todo?', resposta: 16,
-      opcoes: [14, 17, 16, 18] },
-    { titulo: 'Animais na quinta', unidade: 'animais', icone: '🐔',
-      dados: [['Galinhas', 12], ['Ovelhas', 7], ['Vacas', 3], ['Cabras', 5]],
-      pergunta: 'De que animal há menos na quinta?', resposta: 'Vacas',
-      opcoes: ['Galinhas', 'Ovelhas', 'Vacas', 'Cabras'] },
-    { titulo: 'Chuva na semana', unidade: 'mm', icone: '🌧️',
-      dados: [['Seg', 2], ['Ter', 6], ['Qua', 0], ['Qui', 4]],
-      pergunta: 'Quantos mm de chuva caíram na Terça?', resposta: 6,
-      opcoes: [7, 8, 4, 6] }
+      pergunta: 'Quantos golos a mais marcaram os Azuis do que os Verdes?', resposta: 3,
+      opcoes: [4, 3, 5, 2] },
+    { titulo: 'Livros lidos por mês', modo: 'barras', unidade: 'livros', icone: '📚',
+      dados: [['Jan', 5], ['Fev', 8], ['Mar', 6], ['Abr', 3]],
+      pergunta: 'Quantos livros foram lidos ao todo?', resposta: 22,
+      opcoes: [23, 22, 24, 21] },
+    { titulo: 'Animal preferido', modo: 'barras', unidade: 'votos', icone: '🐾',
+      dados: [['Cão', 6], ['Gato', 3], ['Peixe', 3]],
+      pergunta: 'Que fração da turma escolheu o Cão?', resposta: '1/2',
+      opcoes: ['1/3', '1/2', '1/4', '2/3'] },
+    { titulo: 'Flores no jardim', modo: 'barras', unidade: 'flores', icone: '🌷',
+      dados: [['Rosa', 4], ['Tulipa', 9], ['Malmequer', 6]],
+      pergunta: 'Quantas flores faltam à Rosa para igualar a Tulipa?', resposta: 5,
+      opcoes: [6, 5, 7, 4] }
   ],
 
   // -------------------------------------------------- Mapa de níveis (home)

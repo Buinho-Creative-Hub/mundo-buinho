@@ -598,3 +598,113 @@ button {
   animation: buRise .4s ease both;
 }
 .graf-rot { font-size: 13.5px; font-weight: 700; color: var(--castanho); text-align: center; line-height: 1.1; }
+
+/* ======================================================================
+   JOGOS DE MATEMÁTICA — nível exigente (fração de quantidade, troco,
+   área/perímetro, cronómetro, pictograma)
+   ====================================================================== */
+
+/* Fração como parte de uma fração inline no enunciado */
+.fracao-inline {
+  display: inline-block;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  color: var(--azul);
+  background: rgba(32, 56, 166, .1);
+  border-radius: 10px;
+  padding: 0 8px;
+}
+
+/* Jogo 6 — cesto de frutos (apanhar a fração de uma quantidade) */
+.cesto {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 6px 0 4px;
+}
+.fruto {
+  width: 54px; height: 54px;
+  border-radius: 14px;
+  font-size: 30px;
+  line-height: 1;
+  background: var(--creme);
+  box-shadow: 0 4px 0 var(--creme-escuro);
+  display: flex; align-items: center; justify-content: center;
+  filter: grayscale(.15) opacity(.9);
+  transition: transform .1s, box-shadow .15s, filter .15s, background .15s;
+}
+.fruto.apanhado {
+  background: #e7efd9;
+  box-shadow: 0 4px 0 var(--verde-fundo), inset 0 0 0 3px var(--verde);
+  filter: none;
+  transform: translateY(2px) scale(1.03);
+}
+.fruto:active { transform: scale(.94); }
+
+/* Jogo 7 — pergunta do troco */
+.troco-pergunta { text-align: center; font-weight: 700; color: var(--castanho); margin: -6px 0 12px; }
+
+/* Jogo 8 — medidas no SVG do retângulo */
+.medida {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  fill: var(--tinta);
+}
+.medida-incognita { fill: var(--laranja); font-size: 22px; }
+
+/* Cronómetro (jogos-quiz) */
+.tempo {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.tempo-icone { font-size: 20px; }
+.tempo-fundo {
+  flex: 1;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--creme-escuro);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.12);
+}
+.tempo-barra {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--verde);
+  transition: width .12s linear, background .3s;
+}
+.tempo-num {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--castanho);
+  min-width: 38px;
+  text-align: right;
+}
+
+/* Jogo 10 — pictograma (cada símbolo vale N; ler a escala é o desafio) */
+.pictograma {
+  display: flex; flex-direction: column; gap: 10px;
+  margin: 6px 0 14px;
+  padding: 12px;
+  background: rgba(255,255,255,.4);
+  border-radius: 16px;
+}
+.pic-linha { display: flex; align-items: center; gap: 10px; }
+.pic-rot {
+  min-width: 76px;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--tinta);
+}
+.pic-simbolos { display: flex; flex-wrap: wrap; gap: 3px; font-size: 24px; line-height: 1.1; }
+.pic-simb { animation: buPop .3s ease both; }
+.pic-legenda {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--castanho);
+  text-align: center;
+}
