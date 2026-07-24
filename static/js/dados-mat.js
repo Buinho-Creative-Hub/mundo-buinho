@@ -1043,9 +1043,9 @@ window.MB_JOGOS = [
               "🍎"
             ],
             [
-              "Banana",
+              "Laranja",
               4,
-              "🍌"
+              "🍊"
             ],
             [
               "Pera",
@@ -1053,7 +1053,7 @@ window.MB_JOGOS = [
               "🍐"
             ]
           ],
-          "pergunta": "Cada símbolo vale 2 votos. Quantos votos teve a Banana?",
+          "pergunta": "Cada símbolo vale 2 votos. Quantos votos teve a Laranja?",
           "resposta": 8,
           "opcoes": [
             9,

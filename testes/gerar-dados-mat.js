@@ -181,8 +181,8 @@ const PICT = (dados, escala, unidade, alvo, prox) => ({ visual: 'grafico', modo:
 JOGOS.push({ id: 'q9', nome: 'Gráficos', icone: '📊', niveis: [
   nivel([
     { visual: 'grafico', modo: 'pictograma', escala: 2, unidade: 'votos',
-      dados: [['Maçã', 3, '🍎'], ['Banana', 4, '🍌'], ['Pera', 2, '🍐']],
-      pergunta: 'Cada símbolo vale 2 votos. Quantos votos teve a Banana?', resposta: 8, verif: 8 },
+      dados: [['Maçã', 3, '🍎'], ['Laranja', 4, '🍊'], ['Pera', 2, '🍐']],
+      pergunta: 'Cada símbolo vale 2 votos. Quantos votos teve a Laranja?', resposta: 8, verif: 8 },
     { visual: 'grafico', modo: 'barras', unidade: 'golos',
       dados: [['Azuis', 7, '🔵'], ['Verdes', 4, '🟢'], ['Rubros', 5, '🔴']],
       pergunta: 'Quantos golos foram marcados ao todo?', resposta: 16, verif: 16 },

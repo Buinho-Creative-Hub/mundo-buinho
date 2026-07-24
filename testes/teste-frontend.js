@@ -234,7 +234,7 @@ const esperar = ms => new Promise(r => setTimeout(r, ms));
   const linhas9 = $$('.pic-linha');
   ok(linhas9.length === 3, 'q9 (Gráficos) 1ª ronda é pictograma com 3 linhas');
   const icones9 = linhas9.map(l => (l.querySelector('.pic-simb') || {}).textContent);
-  ok(new Set(icones9).size >= 2, 'as linhas do pictograma usam ícones DIFERENTES (maçã/banana/pera), não todos iguais');
+  ok(new Set(icones9).size >= 2, 'as linhas do pictograma usam ícones DIFERENTES (maçã/laranja/pera), não todos iguais');
   MB.ir('home');
 
   // -------------------------------------------------------- Cronómetro (núcleo)
