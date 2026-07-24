@@ -37,7 +37,7 @@
 
   // ------------------------------------------------------------------ home
   function vistaHome() {
-    const alturaMapa = 1140; // acomoda o nível 5 em y=1054 (o protótipo cortava)
+    const alturaMapa = 2160; // acomoda os 10 níveis (o último em y=2054)
     const niveis = D.niveis.map(l => `
       <button class="nivel" data-accao="ir" data-ecra="${l.ecra}"
               style="left:${l.x};top:${l.y}px;--cor:${l.cor};--sombra:${l.sombra}">
@@ -49,7 +49,7 @@
         <span class="nivel-tema">${esc(l.tema)}</span>
       </button>`).join('');
 
-    return `${topo('Mundo Buinho', 'Jogos de biofabricação', false)}
+    return `${topo('Mundo Buinho', 'Matemática e ciência a brincar', false)}
       <div class="mapa" style="height:${alturaMapa}px">
         <div class="mapa-mascote">
           <div class="mascote-bolha" style="width:76px;height:76px">
@@ -453,6 +453,311 @@
     MB.avaliarDesenho(base64, desafio);
   }
 
+  // =======================================================================
+  // JOGOS DE MATEMÁTICA — 4.º ano (matemática verificada; ver dados.js)
+  // =======================================================================
+
+  // avança para a ronda seguinte ou volta ao mapa; devolve o patch de estado.
+  function avancar(chave, novoEstado) {
+    return s => {
+      const ni = s[chave].idx + 1;
+      const total = D[chave].length;
+      if (ni >= total) { setTimeout(() => MB.ir('home'), 300); return {}; }
+      const p = {}; p[chave] = novoEstado(ni); return p;
+    };
+  }
+
+  // ---------------------------------------- Jogo 6 — Fatias Certas (frações)
+  function vistaG6() {
+    const S = MB.estado();
+    const p = D.g6[S.g6.idx] || D.g6[0];
+    const pintadas = S.g6.pintadas;
+    const fatias = Array.from({ length: p.partes }).map((_, i) => {
+      const on = pintadas.indexOf(i) >= 0;
+      return `<button class="fatia ${on ? 'pintada' : ''}" data-accao="g6-fatia" data-i="${i}"
+               aria-label="Fatia ${i + 1}"${on ? ' aria-pressed="true"' : ''}></button>`;
+    }).join('');
+    const pontos = D.g6.map((_, i) =>
+      `<span class="ponto ${i < S.g6.idx ? 'feito' : ''} ${i === S.g6.idx ? 'actual' : ''}"></span>`).join('');
+    return `${topo('Fatias Certas', 'Problema ' + (S.g6.idx + 1) + ' de ' + D.g6.length, true)}
+      <div class="painel">
+        <p class="enunciado">${esc(p.icone)} ${esc(p.enunciado)}</p>
+        <div class="fracao-alvo">${esc(p.rotulo)}</div>
+        <div class="barra-fatias" style="grid-template-columns:repeat(${p.partes},1fr)">${fatias}</div>
+        <p class="contador">Pintaste ${pintadas.length} de ${p.partes}</p>
+        <button class="botao verde" data-accao="g6-verificar">Verificar</button>
+        <button class="botao-pequeno" data-accao="g6-ajuda" style="width:100%;margin-top:10px">Preciso de ajuda 🌱</button>
+        <div class="pontos">${pontos}</div>
+      </div>`;
+  }
+
+  function g6Fatia(i) {
+    const S = MB.estado();
+    if (S.g6.aResolver) return;
+    MB.sfx.toque();
+    MB.set(s => {
+      const set = s.g6.pintadas.slice();
+      const j = set.indexOf(i);
+      if (j >= 0) set.splice(j, 1); else set.push(i);
+      return { g6: Object.assign({}, s.g6, { pintadas: set }) };
+    });
+  }
+
+  function g6Verificar() {
+    const S = MB.estado();
+    const p = D.g6[S.g6.idx];
+    if (S.g6.pintadas.length === p.num) {
+      MB.celebrar('🍰', 'Fração certa!');
+      MB.set(s => ({ g6: Object.assign({}, s.g6, { aResolver: true }) }));
+      setTimeout(() => MB.set(avancar('g6', () => ({ idx: MB.estado().g6.idx + 1, pintadas: [], aResolver: false }))), 900);
+    } else {
+      MB.sfx.errado();
+      MB.pedirDica('No jogo Fatias Certas, o desafio é "' + p.enunciado + '" (fração ' + p.rotulo +
+        '). A criança pintou ' + S.g6.pintadas.length + ' de ' + p.partes +
+        ' fatias. Dá uma pista curta: o número de cima da fração diz quantas fatias pintar. Não digas o número.');
+    }
+  }
+
+  // ------------------------------------------- Jogo 7 — A Feira (dinheiro)
+  function euros(cents) { return (cents / 100).toFixed(2).replace('.', ',') + ' €'; }
+
+  function vistaG7() {
+    const S = MB.estado();
+    const p = D.g7[S.g7.idx] || D.g7[0];
+    const escolhidas = S.g7.escolhidas;
+    const total = escolhidas.reduce((sum, i) => sum + p.tabuleiro[i], 0);
+    const moedas = p.tabuleiro.map((c, i) => {
+      const on = escolhidas.indexOf(i) >= 0;
+      const cls = c >= 100 ? 'ouro' : 'prata';
+      return `<button class="moeda ${cls} ${on ? 'escolhida' : ''}" data-accao="g7-moeda" data-i="${i}">${euros(c)}</button>`;
+    }).join('');
+    const pontos = D.g7.map((_, i) =>
+      `<span class="ponto ${i < S.g7.idx ? 'feito' : ''} ${i === S.g7.idx ? 'actual' : ''}"></span>`).join('');
+    return `${topo('A Feira', 'Compra ' + (S.g7.idx + 1) + ' de ' + D.g7.length, true)}
+      <div class="painel">
+        <p class="enunciado">${esc(p.icone)} Paga ${esc(p.produto)} — custa <b>${euros(p.alvo)}</b></p>
+        <div class="carteira">Na tua mão: <b>${euros(total)}</b></div>
+        <div class="moedas">${moedas}</div>
+        <button class="botao verde" data-accao="g7-pagar" style="margin-top:16px">Pagar</button>
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="botao-pequeno" data-accao="g7-limpar" style="flex:1">Limpar</button>
+          <button class="botao-pequeno" data-accao="g7-ajuda" style="flex:1">Ajuda 🌱</button>
+        </div>
+        <div class="pontos">${pontos}</div>
+      </div>`;
+  }
+
+  function g7Moeda(i) {
+    const S = MB.estado();
+    if (S.g7.aResolver) return;
+    MB.sfx.toque();
+    MB.set(s => {
+      const set = s.g7.escolhidas.slice();
+      const j = set.indexOf(i);
+      if (j >= 0) set.splice(j, 1); else set.push(i);
+      return { g7: Object.assign({}, s.g7, { escolhidas: set }) };
+    });
+  }
+
+  function g7Limpar() { MB.sfx.toque(); MB.set(s => ({ g7: Object.assign({}, s.g7, { escolhidas: [] }) })); }
+
+  function g7Pagar() {
+    const S = MB.estado();
+    const p = D.g7[S.g7.idx];
+    const total = S.g7.escolhidas.reduce((sum, i) => sum + p.tabuleiro[i], 0);
+    if (total === p.alvo) {
+      MB.celebrar('🪙', 'Certo!');
+      MB.set(s => ({ g7: Object.assign({}, s.g7, { aResolver: true }) }));
+      setTimeout(() => MB.set(avancar('g7', () => ({ idx: MB.estado().g7.idx + 1, escolhidas: [], aResolver: false }))), 900);
+    } else {
+      MB.sfx.errado();
+      const dir = total > p.alvo ? 'a mais' : 'a menos';
+      MB.pedirDica('No jogo A Feira, é preciso pagar exactamente ' + euros(p.alvo) + '. A criança juntou ' +
+        euros(total) + ', que é ' + dir + '. Dá uma pista curta para trocar ou juntar moedas, sem dizeres a combinação.');
+    }
+  }
+
+  // -------------------------------------- Jogo 8 — A Horta Cercada (perímetro)
+  // Arestas exteriores da forma (vizinho ausente). Cada aresta = 1 metro de cerca.
+  function arestasExteriores(cells) {
+    const set = new Set(cells.map(c => c[0] + ',' + c[1]));
+    const arr = [];
+    const add = (x1, y1, x2, y2) => arr.push({ k: x1 + ',' + y1 + '_' + x2 + ',' + y2, x1, y1, x2, y2 });
+    for (const cell of cells) {
+      const c = cell[0], r = cell[1];
+      if (!set.has((c - 1) + ',' + r)) add(c, r, c, r + 1);       // esquerda
+      if (!set.has((c + 1) + ',' + r)) add(c + 1, r, c + 1, r + 1); // direita
+      if (!set.has(c + ',' + (r - 1))) add(c, r, c + 1, r);       // cima
+      if (!set.has(c + ',' + (r + 1))) add(c, r + 1, c + 1, r + 1); // baixo
+    }
+    return arr;
+  }
+
+  function vistaG8() {
+    const S = MB.estado();
+    const p = D.g8[S.g8.idx] || D.g8[0];
+    const cells = p.cells;
+    const cols = cells.map(c => c[0]), rows = cells.map(c => c[1]);
+    const minc = Math.min.apply(null, cols), maxc = Math.max.apply(null, cols);
+    const minr = Math.min.apply(null, rows), maxr = Math.max.apply(null, rows);
+    const CELL = 52, PAD = 18;
+    const W = (maxc - minc + 1) * CELL + PAD * 2, H = (maxr - minr + 1) * CELL + PAD * 2;
+    const gx = c => (c - minc) * CELL + PAD, gy = r => (r - minr) * CELL + PAD;
+    const quadrados = cells.map(cell =>
+      `<rect x="${gx(cell[0])}" y="${gy(cell[1])}" width="${CELL}" height="${CELL}" rx="4"
+             fill="#e7efd9" stroke="#c9d8b3" stroke-width="1.5"/>`).join('');
+    const cercadas = S.g8.cercadas;
+    const linhas = arestasExteriores(cells).map(a => {
+      const on = !!cercadas[a.k];
+      const x1 = gx(a.x1), y1 = gy(a.y1), x2 = gx(a.x2), y2 = gy(a.y2);
+      return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${on ? '#FA6415' : '#C3BAA3'}"
+                stroke-width="${on ? 8 : 3}" stroke-linecap="round" ${on ? '' : 'stroke-dasharray="2 7"'}/>
+              <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="transparent" stroke-width="26"
+                stroke-linecap="round" data-accao="g8-aresta" data-k="${a.k}" style="cursor:pointer"/>`;
+    }).join('');
+    const feitas = Object.keys(cercadas).filter(k => cercadas[k]).length;
+    const pontos = D.g8.map((_, i) =>
+      `<span class="ponto ${i < S.g8.idx ? 'feito' : ''} ${i === S.g8.idx ? 'actual' : ''}"></span>`).join('');
+    const nomeCap = p.nome.charAt(0).toUpperCase() + p.nome.slice(1);
+    return `${topo('A Horta Cercada', nomeCap + ' · horta ' + (S.g8.idx + 1) + ' de ' + D.g8.length, true)}
+      <div class="painel">
+        <p class="enunciado">Põe cerca à volta de toda a horta. Toca em cada lado!</p>
+        <div style="display:flex;justify-content:center">
+          <svg viewBox="0 0 ${W} ${H}" class="horta-svg" style="max-width:${W}px;width:100%" aria-label="Grelha da horta">${quadrados}${linhas}</svg>
+        </div>
+        <p class="contador">Cerca: <b>${feitas}</b> metros ${feitas === p.perimetro ? '✅' : ''}</p>
+        <button class="botao verde" data-accao="g8-verificar">A cerca está pronta!</button>
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="botao-pequeno" data-accao="g8-limpar" style="flex:1">Recomeçar</button>
+          <button class="botao-pequeno" data-accao="g8-ajuda" style="flex:1">Ajuda 🌱</button>
+        </div>
+        <div class="pontos">${pontos}</div>
+      </div>`;
+  }
+
+  function g8Aresta(k) {
+    const S = MB.estado();
+    if (S.g8.aResolver) return;
+    MB.sfx.toque();
+    MB.set(s => {
+      const m = Object.assign({}, s.g8.cercadas);
+      if (m[k]) delete m[k]; else m[k] = true;
+      return { g8: Object.assign({}, s.g8, { cercadas: m }) };
+    });
+  }
+
+  function g8Limpar() { MB.sfx.toque(); MB.set(s => ({ g8: Object.assign({}, s.g8, { cercadas: {} }) })); }
+
+  function g8Verificar() {
+    const S = MB.estado();
+    const p = D.g8[S.g8.idx];
+    const arestas = arestasExteriores(p.cells);
+    const feitas = Object.keys(S.g8.cercadas).filter(k => S.g8.cercadas[k]).length;
+    const todas = arestas.every(a => S.g8.cercadas[a.k]);
+    if (todas && feitas === p.perimetro) {
+      MB.celebrar('📏', 'Perímetro ' + p.perimetro + ' m!');
+      MB.set(s => ({ g8: Object.assign({}, s.g8, { aResolver: true }) }));
+      setTimeout(() => MB.set(avancar('g8', () => ({ idx: MB.estado().g8.idx + 1, cercadas: {}, aResolver: false }))), 1000);
+    } else {
+      MB.sfx.errado();
+      const faltam = p.perimetro - feitas;
+      MB.pedirDica('No jogo A Horta Cercada, é preciso cercar toda a volta da horta. Faltam ' +
+        (faltam > 0 ? faltam + ' lado(s)' : 'seguir a volta toda') + '. Dá uma pista curta para a criança seguir a volta toda, lado a lado, sem dizer o número.');
+    }
+  }
+
+  // -------------------------------------- Jogo 9 — Castelos na Areia (sequências)
+  function vistaG9() {
+    const S = MB.estado();
+    const p = D.g9[S.g9.idx] || D.g9[0];
+    const maxv = Math.max.apply(null, p.termos.concat([p.resposta]));
+    const castelo = (v, rotulo, incognita) => {
+      const h = Math.round(28 + (v / maxv) * 108);
+      return `<div class="castelo-col">
+        <div class="castelo-bar ${incognita ? 'incognita' : ''}" style="height:${h}px">${incognita ? '?' : ''}</div>
+        <div class="castelo-rot">${esc(rotulo)}</div>
+      </div>`;
+    };
+    const barras = p.termos.map(v => castelo(v, String(v), false)).join('') + castelo(p.resposta, '?', true);
+    const opcoes = p.opcoes.map(v => {
+      const errado = S.g9.errado === v;
+      return `<button class="botao ${errado ? 'errado' : ''}" data-accao="g9-resp" data-v="${v}">${v}</button>`;
+    }).join('');
+    const pontos = D.g9.map((_, i) =>
+      `<span class="ponto ${i < S.g9.idx ? 'feito' : ''} ${i === S.g9.idx ? 'actual' : ''}"></span>`).join('');
+    return `${topo('Castelos na Areia', 'Castelo ' + (S.g9.idx + 1) + ' de ' + D.g9.length, true)}
+      <div class="painel">
+        <p class="enunciado">Os castelos crescem. Quantos blocos tem o próximo?</p>
+        <div class="castelos">${barras}</div>
+        <div class="grelha grelha-2">${opcoes}</div>
+        <button class="botao-pequeno" data-accao="g9-ajuda" style="width:100%;margin-top:14px">Preciso de ajuda 🌱</button>
+        <div class="pontos">${pontos}</div>
+      </div>`;
+  }
+
+  function g9Responder(v) {
+    const S = MB.estado();
+    if (S.g9.aResolver) return;
+    const p = D.g9[S.g9.idx];
+    if (v === p.resposta) {
+      MB.celebrar('🏰', 'Certo!');
+      MB.set(s => ({ g9: Object.assign({}, s.g9, { aResolver: true, errado: null }) }));
+      setTimeout(() => MB.set(avancar('g9', () => ({ idx: MB.estado().g9.idx + 1, errado: null, aResolver: false }))), 900);
+    } else {
+      MB.sfx.errado();
+      MB.set(s => ({ g9: Object.assign({}, s.g9, { errado: v }) }));
+      MB.pedirDica('No jogo Castelos na Areia, a sequência é ' + p.termos.join(', ') + ', ? — cresce ' + p.pista +
+        '. A criança respondeu ' + v + ', que está errado. Dá uma pista sobre o salto entre os números, sem dizeres o resultado.');
+    }
+  }
+
+  // -------------------------------------- Jogo 10 — O Gráfico da Turma (gráficos)
+  function vistaG10() {
+    const S = MB.estado();
+    const p = D.g10[S.g10.idx] || D.g10[0];
+    const maxv = Math.max.apply(null, p.dados.map(d => d[1]).concat([1]));
+    const cores = ['#2038A6', '#FA6415', '#6B8F3E', '#f6b93b'];
+    const barras = p.dados.map((d, i) => {
+      const h = Math.round(10 + (d[1] / maxv) * 132);
+      return `<div class="graf-col">
+        <div class="graf-val">${d[1]}</div>
+        <div class="graf-bar" style="height:${h}px;background:${cores[i % cores.length]}"></div>
+        <div class="graf-rot">${esc(d[0])}</div>
+      </div>`;
+    }).join('');
+    const opcoes = p.opcoes.map(v => {
+      const errado = String(S.g10.errado) === String(v);
+      return `<button class="botao ${errado ? 'errado' : ''}" data-accao="g10-resp" data-v="${esc(String(v))}">${esc(String(v))}</button>`;
+    }).join('');
+    const pontos = D.g10.map((_, i) =>
+      `<span class="ponto ${i < S.g10.idx ? 'feito' : ''} ${i === S.g10.idx ? 'actual' : ''}"></span>`).join('');
+    return `${topo('O Gráfico da Turma', 'Gráfico ' + (S.g10.idx + 1) + ' de ' + D.g10.length, true)}
+      <div class="painel">
+        <p class="graf-titulo">${esc(p.icone)} ${esc(p.titulo)} <span>(${esc(p.unidade)})</span></p>
+        <div class="grafico">${barras}</div>
+        <p class="enunciado" style="font-size:18px">${esc(p.pergunta)}</p>
+        <div class="grelha grelha-2">${opcoes}</div>
+        <button class="botao-pequeno" data-accao="g10-ajuda" style="width:100%;margin-top:14px">Preciso de ajuda 🌱</button>
+        <div class="pontos">${pontos}</div>
+      </div>`;
+  }
+
+  function g10Responder(v) {
+    const S = MB.estado();
+    if (S.g10.aResolver) return;
+    const p = D.g10[S.g10.idx];
+    if (String(v) === String(p.resposta)) {
+      MB.celebrar('📊', 'Certo!');
+      MB.set(s => ({ g10: Object.assign({}, s.g10, { aResolver: true, errado: null }) }));
+      setTimeout(() => MB.set(avancar('g10', () => ({ idx: MB.estado().g10.idx + 1, errado: null, aResolver: false }))), 900);
+    } else {
+      MB.sfx.errado();
+      MB.set(s => ({ g10: Object.assign({}, s.g10, { errado: v }) }));
+      MB.pedirDica('No jogo O Gráfico da Turma, o gráfico mostra ' + p.titulo + '. A pergunta é: "' + p.pergunta +
+        '". A criança respondeu ' + v + ', que está errado. Dá uma pista para olhar a altura das barras, sem dares a resposta.');
+    }
+  }
+
   // ------------------------------------------------------- mascote/celebração
   function camadaMascote() {
     const m = MB.estado().mascote;
@@ -486,7 +791,10 @@
   }
 
   // ------------------------------------------------------------------ render
-  const VISTAS = { home: vistaHome, g1: vistaG1, g2: vistaG2, g3: vistaG3, g4: vistaG4, g5: vistaG5 };
+  const VISTAS = {
+    home: vistaHome, g1: vistaG1, g2: vistaG2, g3: vistaG3, g4: vistaG4, g5: vistaG5,
+    g6: vistaG6, g7: vistaG7, g8: vistaG8, g9: vistaG9, g10: vistaG10
+  };
 
   let _ecraAnterior = null;
 
@@ -573,6 +881,56 @@
           MB.set(s => ({ g5: Object.assign({}, s.g5, { desafioIdx: (s.g5.desafioIdx + 1) % D.g5Desafios.length }) }));
           break;
         case 'g5-mostrar': g5Mostrar(); break;
+
+        // ---- Jogo 6 — Fatias Certas (frações)
+        case 'g6-fatia': g6Fatia(+el.dataset.i); break;
+        case 'g6-verificar': g6Verificar(); break;
+        case 'g6-ajuda': {
+          const p = D.g6[MB.estado().g6.idx];
+          MB.pedirDica('A criança pediu ajuda no jogo Fatias Certas (pintar a fração ' + p.rotulo +
+            '). Dá uma pista curta: o número de cima da fração diz quantas fatias pintar. Não digas o número.');
+          break;
+        }
+
+        // ---- Jogo 7 — A Feira (dinheiro/decimais)
+        case 'g7-moeda': g7Moeda(+el.dataset.i); break;
+        case 'g7-pagar': g7Pagar(); break;
+        case 'g7-limpar': g7Limpar(); break;
+        case 'g7-ajuda': {
+          const p = D.g7[MB.estado().g7.idx];
+          MB.pedirDica('A criança pediu ajuda no jogo A Feira. Tem de pagar exactamente ' + euros(p.alvo) +
+            ' com moedas. Dá uma pista curta para juntar moedas até ao preço, sem dizeres a combinação.');
+          break;
+        }
+
+        // ---- Jogo 8 — A Horta Cercada (perímetro)
+        case 'g8-aresta': g8Aresta(el.dataset.k); break;
+        case 'g8-verificar': g8Verificar(); break;
+        case 'g8-limpar': g8Limpar(); break;
+        case 'g8-ajuda': {
+          const p = D.g8[MB.estado().g8.idx];
+          MB.pedirDica('A criança pediu ajuda no jogo A Horta Cercada (contar o perímetro da horta "' + p.nome +
+            '"). Dá uma pista curta para seguir a volta toda da horta, lado a lado, sem dizeres o número.');
+          break;
+        }
+
+        // ---- Jogo 9 — Castelos na Areia (sequências)
+        case 'g9-resp': g9Responder(+el.dataset.v); break;
+        case 'g9-ajuda': {
+          const p = D.g9[MB.estado().g9.idx];
+          MB.pedirDica('A criança pediu ajuda no jogo Castelos na Areia. A sequência é ' + p.termos.join(', ') +
+            ', ? e cresce ' + p.pista + '. Dá uma pista sobre o salto entre os números, sem dizeres o resultado.');
+          break;
+        }
+
+        // ---- Jogo 10 — O Gráfico da Turma (gráficos)
+        case 'g10-resp': g10Responder(el.dataset.v); break;
+        case 'g10-ajuda': {
+          const p = D.g10[MB.estado().g10.idx];
+          MB.pedirDica('A criança pediu ajuda no jogo O Gráfico da Turma. A pergunta é: "' + p.pergunta +
+            '". Dá uma pista para ela olhar a altura das barras do gráfico, sem dares a resposta.');
+          break;
+        }
       }
     });
   }

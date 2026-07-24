@@ -17,7 +17,12 @@
     g2: { fase: 'ordem', slots: [null, null, null, null], pool: baralhar([0, 1, 2, 3]), ligados: {} },
     g3: { idx: 0, errado: null, aResolver: false },
     g4: { idx: 0, terminado: false },
-    g5: { desafioIdx: 0, cor: '#6B8F3E', espessura: 8 }
+    g5: { desafioIdx: 0, cor: '#6B8F3E', espessura: 8 },
+    g6: { idx: 0, pintadas: [], aResolver: false },      // índices de fatias pintadas
+    g7: { idx: 0, escolhidas: [], aResolver: false },    // índices do tabuleiro escolhidos
+    g8: { idx: 0, cercadas: {} },                        // arestas cercadas (chave -> true)
+    g9: { idx: 0, errado: null, aResolver: false },
+    g10: { idx: 0, errado: null, aResolver: false }
   });
 
   let S = estadoInicial();

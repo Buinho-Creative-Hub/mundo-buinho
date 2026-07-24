@@ -60,7 +60,7 @@ function clicar(el) {
 grupo('ARRANQUE');
 ok($('#app').innerHTML.length > 500, 'render inicial produz HTML');
 ok(MB.estado().ecra === 'home', 'ecrã inicial é home');
-ok($$('.nivel').length === 5, 'mapa mostra 5 níveis (tem ' + $$('.nivel').length + ')');
+ok($$('.nivel').length === 10, 'mapa mostra 10 níveis (tem ' + $$('.nivel').length + ')');
 
 // níveis dentro da altura do mapa
 const alturaMapa = parseInt($('.mapa').style.height);
@@ -183,6 +183,107 @@ const esperar = ms => new Promise(r => setTimeout(r, ms));
   ok($('#tela') === telaAntes, 'canvas sobrevive também a mudar a espessura');
   MB.ir('home'); MB.ir('g5');
   ok($('#tela') !== telaAntes, 'sair e voltar ao jogo cria canvas novo (tela limpa)');
+
+  // ==================================================================
+  // JOGOS DE MATEMÁTICA — 4.º ano (6–10)
+  // ==================================================================
+
+  // -------------------------------------------------------- Jogo 6 (frações)
+  grupo('JOGO 6 — Fatias Certas (frações)');
+  MB.ir('g6');
+  ok($$('.fatia').length === D.g6[0].partes, 'g6 mostra ' + D.g6[0].partes + ' fatias no 1º problema');
+  // pintar exactamente `num` fatias
+  const p6 = D.g6[0];
+  for (let i = 0; i < p6.num; i++) clicar($('[data-accao="g6-fatia"][data-i="' + i + '"]'));
+  ok(MB.estado().g6.pintadas.length === p6.num, 'pinta ' + p6.num + ' fatias');
+  clicar($('[data-accao="g6-verificar"]'));
+  ok(MB.estado().celebracao !== null, 'fração certa dispara celebração');
+  await esperar(1000);
+  ok(MB.estado().g6.idx === 1, 'avança para o problema 2 (idx=' + MB.estado().g6.idx + ')');
+  // fração errada (pintar a menos)
+  clicar($('[data-accao="g6-fatia"][data-i="0"]'));
+  clicar($('[data-accao="g6-verificar"]'));
+  await esperar(50);
+  ok(MB.estado().mascote.aberta, 'fração errada abre a mascote');
+
+  // -------------------------------------------------------- Jogo 7 (dinheiro)
+  grupo('JOGO 7 — A Feira (dinheiro/decimais)');
+  MB.fecharMascote();
+  MB.ir('g7');
+  ok($$('.moeda').length === D.g7[0].tabuleiro.length, 'g7 mostra o tabuleiro de moedas');
+  // pagar exactamente com uma combinação real (força bruta)
+  function subsetQuePaga(vals, alvo) {
+    for (let m = 1; m < (1 << vals.length); m++) {
+      let s = 0, idx = [];
+      for (let b = 0; b < vals.length; b++) if (m & (1 << b)) { s += vals[b]; idx.push(b); }
+      if (s === alvo) return idx;
+    }
+    return null;
+  }
+  const idx7 = subsetQuePaga(D.g7[0].tabuleiro, D.g7[0].alvo);
+  ok(!!idx7, 'existe combinação que paga o preço');
+  idx7.forEach(i => clicar($('[data-accao="g7-moeda"][data-i="' + i + '"]')));
+  clicar($('[data-accao="g7-pagar"]'));
+  ok(MB.estado().celebracao !== null, 'pagamento exacto dispara celebração');
+  await esperar(1000);
+  ok(MB.estado().g7.idx === 1, 'avança para a compra 2');
+  // pagar a menos
+  clicar($('[data-accao="g7-pagar"]'));
+  await esperar(50);
+  ok(MB.estado().mascote.aberta, 'pagar valor errado abre a mascote');
+
+  // -------------------------------------------------------- Jogo 8 (perímetro)
+  grupo('JOGO 8 — A Horta Cercada (perímetro)');
+  MB.fecharMascote();
+  MB.ir('g8');
+  const nArestas8 = $$('[data-accao="g8-aresta"]').length;
+  ok(nArestas8 === D.g8[0].perimetro,
+     'nº de arestas tocáveis = perímetro (' + D.g8[0].perimetro + ', tem ' + nArestas8 + ')');
+  // re-consultar a cada clique: o re-render substitui os nós do SVG
+  for (let i = 0; i < nArestas8; i++) clicar($$('[data-accao="g8-aresta"]')[i]);
+  ok(MB.estado().g8.cercadas && Object.keys(MB.estado().g8.cercadas).length === D.g8[0].perimetro,
+     'todas as ' + D.g8[0].perimetro + ' arestas ficam cercadas');
+  clicar($('[data-accao="g8-verificar"]'));
+  ok(MB.estado().celebracao !== null, 'cercar toda a horta dispara celebração');
+  await esperar(1100);
+  ok(MB.estado().g8.idx === 1, 'avança para a horta 2');
+  // cerca incompleta
+  clicar($('[data-accao="g8-verificar"]'));
+  await esperar(50);
+  ok(MB.estado().mascote.aberta, 'cerca incompleta abre a mascote');
+
+  // -------------------------------------------------------- Jogo 9 (sequências)
+  grupo('JOGO 9 — Castelos na Areia (sequências)');
+  MB.fecharMascote();
+  MB.ir('g9');
+  ok($$('.castelo-col').length === D.g9[0].termos.length + 1, 'g9 mostra os castelos + o incógnito');
+  const btn9 = $$('[data-accao="g9-resp"]').find(b => +b.dataset.v === D.g9[0].resposta);
+  ok(!!btn9, 'existe botão com o próximo termo certo (' + D.g9[0].resposta + ')');
+  clicar(btn9);
+  ok(MB.estado().celebracao !== null, 'próximo termo certo dispara celebração');
+  await esperar(1000);
+  ok(MB.estado().g9.idx === 1, 'avança para a sequência 2');
+  const btn9errado = $$('[data-accao="g9-resp"]').find(b => +b.dataset.v !== D.g9[1].resposta);
+  clicar(btn9errado);
+  await esperar(50);
+  ok(MB.estado().mascote.aberta, 'termo errado abre a mascote');
+
+  // -------------------------------------------------------- Jogo 10 (gráficos)
+  grupo('JOGO 10 — O Gráfico da Turma (gráficos)');
+  MB.fecharMascote();
+  MB.ir('g10');
+  ok($$('.graf-bar').length === D.g10[0].dados.length, 'g10 desenha uma barra por categoria');
+  const btn10 = $$('[data-accao="g10-resp"]').find(b => b.dataset.v === String(D.g10[0].resposta));
+  ok(!!btn10, 'existe botão com a resposta certa (' + D.g10[0].resposta + ')');
+  clicar(btn10);
+  ok(MB.estado().celebracao !== null, 'leitura certa do gráfico dispara celebração');
+  await esperar(1000);
+  ok(MB.estado().g10.idx === 1, 'avança para o gráfico 2');
+  const btn10errado = $$('[data-accao="g10-resp"]').find(b => b.dataset.v !== String(D.g10[1].resposta));
+  clicar(btn10errado);
+  await esperar(50);
+  ok(MB.estado().mascote.aberta, 'resposta errada abre a mascote');
+  MB.fecharMascote();
 
   // ---------------------------------------------------------- som
   grupo('SOM');
