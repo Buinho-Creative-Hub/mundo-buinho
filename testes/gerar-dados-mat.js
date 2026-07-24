@@ -25,11 +25,31 @@ function opInt(correct, pos) {
 }
 
 // A partir de uma lista de rounds (cada um já com resposta), monta opcoes se faltarem.
+function hashStr(s) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
+
+// Reposiciona a resposta certa de cada jogo. Para nunca ficar sempre no mesmo
+// canto (bug do Carlos) NEM num padrão óbvio: cada jogo arranca numa posição
+// (base, do hash do id) e avança de +1 ou +3 por pergunta (passo do hash) —
+// como 1 e 3 são primos com 4, percorre os 4 cantos por igual. Determinístico.
+function balancearPosicoes(jogos) {
+  for (const j of jogos) {
+    const rounds = j.niveis.reduce((a, n) => a.concat(n), []); // 9 rounds
+    const base = hashStr(j.id) % 4;
+    const passo = (hashStr(j.id + 'x') % 2) ? 3 : 1;
+    rounds.forEach((r, i) => {
+      const distr = r.opcoes.filter(o => String(o) !== String(r.resposta));
+      const pos = (base + i * passo) % 4;
+      const arr = distr.slice(); arr.splice(pos, 0, r.resposta);
+      r.opcoes = arr;
+    });
+  }
+}
+
 // `verif` (opcional) recomputa a resposta e confirma.
 function nivel(rounds) {
   return rounds.map((r, i) => {
     if (r.verif !== undefined) ok(r.verif === r.resposta, `[${r.pergunta}] verif ${r.verif} == resposta ${r.resposta}`);
-    if (!r.opcoes) r.opcoes = opInt(r.resposta, r._pos != null ? r._pos : i + 1);
+    if (!r.opcoes) r.opcoes = opInt(r.resposta, 0);   // posição final definida em balancearPosicoes
     ok(r.opcoes.length === 4, `[${r.pergunta}] tem 4 opções`);
     ok(new Set(r.opcoes.map(String)).size === 4, `[${r.pergunta}] opções únicas`);
     ok(r.opcoes.map(String).indexOf(String(r.resposta)) >= 0, `[${r.pergunta}] opções contêm a resposta (${r.resposta})`);
@@ -294,9 +314,15 @@ JOGOS.push({ id: 'q13', nome: 'Quem é?', icone: '🕵️', niveis: [
   ])
 ]});
 
+// baralhar a posição da resposta certa (equilibrado + sem padrão óbvio)
+balancearPosicoes(JOGOS);
+
 // Verificação estrutural + escrita
 // ======================================================================
 ok(JOGOS.length === 13, 'são 13 jogos');
+// garantir que a resposta certa continua nas opções após reposicionar
+JOGOS.forEach(j => j.niveis.forEach(n => n.forEach(r =>
+  ok(r.opcoes.map(String).indexOf(String(r.resposta)) >= 0, `[${j.id}] resposta em opções após balancear`))));
 JOGOS.forEach(j => {
   ok(j.niveis.length === 3, `${j.id} tem 3 níveis`);
   j.niveis.forEach((n, li) => ok(n.length === 3, `${j.id} nível ${li + 1} tem 3 rounds`));

@@ -9,7 +9,7 @@
    - /api/*  -> NUNCA em cache (respostas da mascote são sempre frescas;
                 se a rede falhar, o cliente já tem os seus próprios fallbacks) */
 
-const CACHE = 'mundo-buinho-v7';   // v7: menu por categorias + 3 jogos de lógica 24 Jul 2026
+const CACHE = 'mundo-buinho-v8';   // v8: fix — resposta certa deixa de ficar sempre no 1.º canto 24 Jul 2026
 
 const ESTATICOS = [
   './',

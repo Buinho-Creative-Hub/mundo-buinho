@@ -13,8 +13,8 @@ window.MB_JOGOS = [
           "pergunta": "6 × 7 = ?",
           "resposta": 42,
           "opcoes": [
-            43,
             42,
+            43,
             41,
             44
           ]
@@ -25,8 +25,8 @@ window.MB_JOGOS = [
           "resposta": 32,
           "opcoes": [
             33,
-            31,
             32,
+            31,
             34
           ]
         },
@@ -37,8 +37,8 @@ window.MB_JOGOS = [
           "opcoes": [
             55,
             53,
-            56,
-            54
+            54,
+            56
           ]
         }
       ],
@@ -49,9 +49,9 @@ window.MB_JOGOS = [
           "resposta": 48,
           "opcoes": [
             49,
-            48,
             47,
-            50
+            50,
+            48
           ]
         },
         {
@@ -59,9 +59,9 @@ window.MB_JOGOS = [
           "pergunta": "13 × 5 = ?",
           "resposta": 65,
           "opcoes": [
+            65,
             66,
             64,
-            65,
             67
           ]
         },
@@ -71,9 +71,9 @@ window.MB_JOGOS = [
           "resposta": 69,
           "opcoes": [
             70,
+            69,
             68,
-            71,
-            69
+            71
           ]
         }
       ],
@@ -84,8 +84,8 @@ window.MB_JOGOS = [
           "resposta": 84,
           "opcoes": [
             85,
-            84,
             83,
+            84,
             86
           ]
         },
@@ -96,8 +96,8 @@ window.MB_JOGOS = [
           "opcoes": [
             101,
             99,
-            100,
-            102
+            102,
+            100
           ]
         },
         {
@@ -105,10 +105,10 @@ window.MB_JOGOS = [
           "pergunta": "18 × 7 = ?",
           "resposta": 126,
           "opcoes": [
+            126,
             127,
             125,
-            128,
-            126
+            128
           ]
         }
       ]
@@ -136,9 +136,9 @@ window.MB_JOGOS = [
           "pergunta": "45 : 5 = ?",
           "resposta": 9,
           "opcoes": [
+            9,
             10,
             8,
-            9,
             11
           ]
         },
@@ -161,8 +161,8 @@ window.MB_JOGOS = [
           "resposta": 12,
           "opcoes": [
             13,
-            12,
             11,
+            12,
             14
           ]
         },
@@ -172,8 +172,8 @@ window.MB_JOGOS = [
           "resposta": 13,
           "opcoes": [
             14,
-            12,
             13,
+            12,
             15
           ]
         },
@@ -182,10 +182,10 @@ window.MB_JOGOS = [
           "pergunta": "84 : 7 = ?",
           "resposta": 12,
           "opcoes": [
+            12,
             13,
             11,
-            14,
-            12
+            14
           ]
         }
       ],
@@ -196,9 +196,9 @@ window.MB_JOGOS = [
           "resposta": 2,
           "opcoes": [
             3,
-            2,
             1,
-            4
+            4,
+            2
           ]
         },
         {
@@ -218,9 +218,9 @@ window.MB_JOGOS = [
           "resposta": 3,
           "opcoes": [
             4,
+            3,
             2,
-            5,
-            3
+            5
           ]
         }
       ]
@@ -242,8 +242,8 @@ window.MB_JOGOS = [
           "resposta": 4,
           "opcoes": [
             5,
-            4,
             3,
+            4,
             6
           ]
         },
@@ -258,8 +258,8 @@ window.MB_JOGOS = [
           "opcoes": [
             4,
             2,
-            3,
-            5
+            5,
+            3
           ]
         },
         {
@@ -271,10 +271,10 @@ window.MB_JOGOS = [
           "pergunta": "Quanto é 1/4 de 12 ?",
           "resposta": 3,
           "opcoes": [
+            3,
             4,
             2,
-            5,
-            3
+            5
           ]
         }
       ],
@@ -335,8 +335,8 @@ window.MB_JOGOS = [
           "pergunta": "Quanto é 3/5 de 25 ?",
           "resposta": 15,
           "opcoes": [
-            16,
             15,
+            16,
             14,
             17
           ]
@@ -348,8 +348,8 @@ window.MB_JOGOS = [
           "pergunta": "2/4 é igual a que fração?",
           "resposta": "1/2",
           "opcoes": [
-            "1/2",
             "1/3",
+            "1/2",
             "2/3",
             "3/4"
           ]
@@ -365,8 +365,8 @@ window.MB_JOGOS = [
           "opcoes": [
             15,
             13,
-            16,
-            14
+            14,
+            16
           ]
         }
       ]
@@ -384,9 +384,9 @@ window.MB_JOGOS = [
           "resposta": 34,
           "opcoes": [
             35,
-            34,
             33,
-            36
+            36,
+            34
           ]
         },
         {
@@ -406,9 +406,9 @@ window.MB_JOGOS = [
           "resposta": 25,
           "opcoes": [
             26,
+            25,
             24,
-            27,
-            25
+            27
           ]
         }
       ],
@@ -431,8 +431,8 @@ window.MB_JOGOS = [
           "opcoes": [
             81,
             79,
-            80,
-            82
+            82,
+            80
           ]
         },
         {
@@ -440,9 +440,9 @@ window.MB_JOGOS = [
           "pergunta": "Qual é maior: 0,7 ou 0,45?",
           "resposta": "0,7",
           "opcoes": [
-            "0,7",
             "0,45",
             "são iguais",
+            "0,7",
             "0,4"
           ]
         }
@@ -453,8 +453,8 @@ window.MB_JOGOS = [
           "pergunta": "3,25 × 10 = ?",
           "resposta": "32,5",
           "opcoes": [
-            "32,5",
             "325",
+            "32,5",
             "3,25",
             "3250"
           ]
@@ -506,8 +506,8 @@ window.MB_JOGOS = [
           "pergunta": "0,80 € + 0,30 € = ?",
           "resposta": "1,10 €",
           "opcoes": [
-            "1,10 €",
             "1,00 €",
+            "1,10 €",
             "0,90 €",
             "1,20 €"
           ]
@@ -517,9 +517,9 @@ window.MB_JOGOS = [
           "pergunta": "2,00 € + 1,50 € = ?",
           "resposta": "3,50 €",
           "opcoes": [
-            "3,50 €",
             "3,00 €",
             "2,50 €",
+            "3,50 €",
             "4,00 €"
           ]
         }
@@ -530,10 +530,10 @@ window.MB_JOGOS = [
           "pergunta": "Pagas 2 € por algo de 1,25 €. Qual é o troco?",
           "resposta": "0,75 €",
           "opcoes": [
-            "0,75 €",
             "0,85 €",
             "1,25 €",
-            "0,50 €"
+            "0,50 €",
+            "0,75 €"
           ]
         },
         {
@@ -552,8 +552,8 @@ window.MB_JOGOS = [
           "pergunta": "Pagas 1 € por algo de 0,70 €. Qual é o troco?",
           "resposta": "0,30 €",
           "opcoes": [
-            "0,30 €",
             "0,40 €",
+            "0,30 €",
             "0,20 €",
             "0,70 €"
           ]
@@ -565,9 +565,9 @@ window.MB_JOGOS = [
           "pergunta": "3 gelados a 0,80 € cada. Quanto pagas?",
           "resposta": "2,40 €",
           "opcoes": [
-            "2,40 €",
             "2,00 €",
             "1,60 €",
+            "2,40 €",
             "3,20 €"
           ]
         },
@@ -576,10 +576,10 @@ window.MB_JOGOS = [
           "pergunta": "2 sumos a 1,25 € cada. Quanto pagas?",
           "resposta": "2,50 €",
           "opcoes": [
-            "2,50 €",
             "2,25 €",
             "1,50 €",
-            "3,50 €"
+            "3,50 €",
+            "2,50 €"
           ]
         },
         {
@@ -624,9 +624,9 @@ window.MB_JOGOS = [
           "pergunta": "Quantos metros de cerca (perímetro)?",
           "resposta": 20,
           "opcoes": [
+            20,
             21,
             19,
-            20,
             22
           ]
         },
@@ -655,8 +655,8 @@ window.MB_JOGOS = [
           "resposta": 15,
           "opcoes": [
             16,
-            15,
             14,
+            15,
             17
           ]
         },
@@ -669,8 +669,8 @@ window.MB_JOGOS = [
           "resposta": 24,
           "opcoes": [
             25,
-            23,
             24,
+            23,
             26
           ]
         },
@@ -682,10 +682,10 @@ window.MB_JOGOS = [
           "pergunta": "Quantos m² de terra (área)?",
           "resposta": 35,
           "opcoes": [
+            35,
             36,
             34,
-            37,
-            35
+            37
           ]
         }
       ],
@@ -700,9 +700,9 @@ window.MB_JOGOS = [
           "resposta": 4,
           "opcoes": [
             5,
-            4,
             3,
-            6
+            6,
+            4
           ]
         },
         {
@@ -730,9 +730,9 @@ window.MB_JOGOS = [
           "resposta": 3,
           "opcoes": [
             4,
+            3,
             2,
-            5,
-            3
+            5
           ]
         }
       ]
@@ -756,8 +756,8 @@ window.MB_JOGOS = [
           "resposta": 10,
           "opcoes": [
             11,
-            10,
             9,
+            10,
             12
           ]
         },
@@ -774,8 +774,8 @@ window.MB_JOGOS = [
           "opcoes": [
             26,
             24,
-            25,
-            27
+            27,
+            25
           ]
         },
         {
@@ -789,10 +789,10 @@ window.MB_JOGOS = [
           "pergunta": "Qual é o número que continua a sequência?",
           "resposta": 15,
           "opcoes": [
+            15,
             16,
             14,
-            17,
-            15
+            17
           ]
         }
       ],
@@ -862,8 +862,8 @@ window.MB_JOGOS = [
           "pergunta": "Qual é o número que continua a sequência?",
           "resposta": 16,
           "opcoes": [
-            17,
             16,
+            17,
             15,
             18
           ]
@@ -880,8 +880,8 @@ window.MB_JOGOS = [
           "resposta": 162,
           "opcoes": [
             163,
-            161,
             162,
+            161,
             164
           ]
         },
@@ -899,8 +899,8 @@ window.MB_JOGOS = [
           "opcoes": [
             22,
             20,
-            23,
-            21
+            21,
+            23
           ]
         }
       ]
@@ -918,10 +918,10 @@ window.MB_JOGOS = [
           "pergunta": "Um quarto de volta são quantos graus?",
           "resposta": 90,
           "opcoes": [
-            90,
             45,
             180,
-            60
+            60,
+            90
           ]
         },
         {
@@ -930,9 +930,9 @@ window.MB_JOGOS = [
           "pergunta": "Meia volta são quantos graus?",
           "resposta": 180,
           "opcoes": [
-            180,
             90,
             360,
+            180,
             270
           ]
         },
@@ -942,8 +942,8 @@ window.MB_JOGOS = [
           "pergunta": "Um ângulo reto tem quantos graus?",
           "resposta": 90,
           "opcoes": [
-            90,
             100,
+            90,
             45,
             180
           ]
@@ -968,10 +968,10 @@ window.MB_JOGOS = [
           "pergunta": "Um ângulo de 40° chama-se...",
           "resposta": "agudo",
           "opcoes": [
-            "agudo",
             "reto",
             "obtuso",
-            "raso"
+            "raso",
+            "agudo"
           ]
         },
         {
@@ -980,9 +980,9 @@ window.MB_JOGOS = [
           "pergunta": "Um ângulo de 130° chama-se...",
           "resposta": "obtuso",
           "opcoes": [
-            "obtuso",
             "agudo",
             "reto",
+            "obtuso",
             "raso"
           ]
         }
@@ -994,8 +994,8 @@ window.MB_JOGOS = [
           "pergunta": "Três quartos de volta são quantos graus?",
           "resposta": 270,
           "opcoes": [
-            270,
             180,
+            270,
             360,
             240
           ]
@@ -1016,10 +1016,10 @@ window.MB_JOGOS = [
           "pergunta": "Dois ângulos retos juntos fazem quantos graus?",
           "resposta": 180,
           "opcoes": [
-            180,
             90,
             360,
-            270
+            270,
+            180
           ]
         }
       ]
@@ -1056,8 +1056,8 @@ window.MB_JOGOS = [
           "pergunta": "Cada símbolo vale 2 votos. Quantos votos teve a Laranja?",
           "resposta": 8,
           "opcoes": [
-            9,
             8,
+            9,
             7,
             10
           ]
@@ -1087,8 +1087,8 @@ window.MB_JOGOS = [
           "resposta": 16,
           "opcoes": [
             17,
-            15,
             16,
+            15,
             18
           ]
         },
@@ -1116,9 +1116,9 @@ window.MB_JOGOS = [
           "pergunta": "Qual foi o animal mais votado?",
           "resposta": "Gato",
           "opcoes": [
-            "Gato",
             "Cão",
             "Peixe",
+            "Gato",
             "Empate"
           ]
         }
@@ -1149,9 +1149,9 @@ window.MB_JOGOS = [
           "resposta": 5,
           "opcoes": [
             6,
-            5,
             4,
-            7
+            7,
+            5
           ]
         },
         {
@@ -1179,9 +1179,9 @@ window.MB_JOGOS = [
           "pergunta": "Cada símbolo vale 5 livros. Quantos livros leu o 2.º ano?",
           "resposta": 20,
           "opcoes": [
+            20,
             21,
             19,
-            20,
             22
           ]
         },
@@ -1209,8 +1209,8 @@ window.MB_JOGOS = [
           "pergunta": "De que animal há menos?",
           "resposta": "Vacas",
           "opcoes": [
-            "Vacas",
             "Ovelhas",
+            "Vacas",
             "Galinhas",
             "Empate"
           ]
@@ -1241,9 +1241,9 @@ window.MB_JOGOS = [
           "pergunta": "Que fração da turma escolheu o Cão?",
           "resposta": "1/2",
           "opcoes": [
-            "1/2",
             "1/3",
             "1/4",
+            "1/2",
             "2/3"
           ]
         },
@@ -1273,8 +1273,8 @@ window.MB_JOGOS = [
           "opcoes": [
             6,
             4,
-            5,
-            7
+            7,
+            5
           ]
         },
         {
@@ -1306,10 +1306,10 @@ window.MB_JOGOS = [
           "pergunta": "Quantos mm de chuva caíram nos 4 dias?",
           "resposta": 20,
           "opcoes": [
+            20,
             21,
             19,
-            22,
-            20
+            22
           ]
         }
       ]
@@ -1326,8 +1326,8 @@ window.MB_JOGOS = [
           "pergunta": "12 + 9 = ?",
           "resposta": 21,
           "opcoes": [
-            22,
             21,
+            22,
             20,
             23
           ]
@@ -1338,8 +1338,8 @@ window.MB_JOGOS = [
           "resposta": 16,
           "opcoes": [
             17,
-            15,
             16,
+            15,
             18
           ]
         },
@@ -1350,8 +1350,8 @@ window.MB_JOGOS = [
           "opcoes": [
             34,
             32,
-            35,
-            33
+            33,
+            35
           ]
         }
       ],
@@ -1362,9 +1362,9 @@ window.MB_JOGOS = [
           "resposta": 15,
           "opcoes": [
             16,
-            15,
             14,
-            17
+            17,
+            15
           ]
         },
         {
@@ -1372,9 +1372,9 @@ window.MB_JOGOS = [
           "pergunta": "5 sacos com 6 maçãs cada. Quantas maçãs ao todo?",
           "resposta": 30,
           "opcoes": [
+            30,
             31,
             29,
-            30,
             32
           ]
         },
@@ -1384,9 +1384,9 @@ window.MB_JOGOS = [
           "resposta": 6,
           "opcoes": [
             7,
+            6,
             5,
-            8,
-            6
+            8
           ]
         }
       ],
@@ -1397,8 +1397,8 @@ window.MB_JOGOS = [
           "resposta": 20,
           "opcoes": [
             21,
-            20,
             19,
+            20,
             22
           ]
         },
@@ -1409,8 +1409,8 @@ window.MB_JOGOS = [
           "opcoes": [
             14,
             12,
-            13,
-            15
+            15,
+            13
           ]
         },
         {
@@ -1418,10 +1418,10 @@ window.MB_JOGOS = [
           "pergunta": "O dobro de 17, mais 6. Quanto é?",
           "resposta": 40,
           "opcoes": [
+            40,
             41,
             39,
-            42,
-            40
+            42
           ]
         }
       ]
@@ -1438,8 +1438,8 @@ window.MB_JOGOS = [
           "pergunta": "O que vem a seguir?   🔺 🔵 🔺 🔵 🔺  __",
           "resposta": "🔵",
           "opcoes": [
-            "🔵",
             "🔺",
+            "🔵",
             "🟢",
             "🟡"
           ]
@@ -1460,10 +1460,10 @@ window.MB_JOGOS = [
           "pergunta": "O que vem a seguir?   ⭐ 🌙 ⭐ 🌙 ⭐  __",
           "resposta": "🌙",
           "opcoes": [
-            "🌙",
             "⭐",
             "☀️",
-            "☁️"
+            "☁️",
+            "🌙"
           ]
         }
       ],
@@ -1473,9 +1473,9 @@ window.MB_JOGOS = [
           "pergunta": "O que vem a seguir?   🔴 🔵 🟢 🔴 🔵 🟢 🔴  __",
           "resposta": "🔵",
           "opcoes": [
-            "🔵",
             "🔴",
             "🟢",
+            "🔵",
             "🟡"
           ]
         },
@@ -1484,8 +1484,8 @@ window.MB_JOGOS = [
           "pergunta": "O que vem a seguir?   🐶 🐱 🐭 🐶 🐱 🐭 🐶  __",
           "resposta": "🐱",
           "opcoes": [
-            "🐱",
             "🐶",
+            "🐱",
             "🐭",
             "🐰"
           ]
@@ -1508,10 +1508,10 @@ window.MB_JOGOS = [
           "pergunta": "O que vem a seguir?   🌑 🌒 🌓 🌔  __",
           "resposta": "🌕",
           "opcoes": [
-            "🌕",
             "🌑",
             "🌘",
-            "🌗"
+            "🌗",
+            "🌕"
           ]
         },
         {
@@ -1519,9 +1519,9 @@ window.MB_JOGOS = [
           "pergunta": "O que vem a seguir?   🔺 🔺 🔵 🔺 🔺 🔵 🔺 🔺  __",
           "resposta": "🔵",
           "opcoes": [
-            "🔵",
             "🔺",
             "🟢",
+            "🔵",
             "🟣"
           ]
         },
@@ -1530,8 +1530,8 @@ window.MB_JOGOS = [
           "pergunta": "O que vem a seguir?   1️⃣ 3️⃣ 5️⃣ 7️⃣  __",
           "resposta": "9️⃣",
           "opcoes": [
-            "9️⃣",
             "8️⃣",
+            "9️⃣",
             "6️⃣",
             "🔟"
           ]
@@ -1551,8 +1551,8 @@ window.MB_JOGOS = [
           "resposta": 7,
           "opcoes": [
             8,
-            7,
             6,
+            7,
             9
           ]
         },
@@ -1563,8 +1563,8 @@ window.MB_JOGOS = [
           "opcoes": [
             5,
             3,
-            4,
-            6
+            6,
+            4
           ]
         },
         {
@@ -1572,10 +1572,10 @@ window.MB_JOGOS = [
           "pergunta": "Tiro-lhe 5 e fica 6. Que número é?",
           "resposta": 11,
           "opcoes": [
+            11,
             12,
             10,
-            13,
-            11
+            13
           ]
         }
       ],
@@ -1607,10 +1607,10 @@ window.MB_JOGOS = [
           "pergunta": "É par, maior que 4 e menor que 8. Que número é?",
           "resposta": 6,
           "opcoes": [
-            6,
             5,
             7,
-            8
+            8,
+            6
           ]
         }
       ],
@@ -1620,8 +1620,8 @@ window.MB_JOGOS = [
           "pergunta": "Multiplicado por 3 dá 21. Que número é?",
           "resposta": 7,
           "opcoes": [
-            8,
             7,
+            8,
             6,
             9
           ]
@@ -1631,8 +1631,8 @@ window.MB_JOGOS = [
           "pergunta": "É par, maior que 20 e menor que 24. Que número é?",
           "resposta": 22,
           "opcoes": [
-            22,
             21,
+            22,
             23,
             24
           ]
@@ -1644,8 +1644,8 @@ window.MB_JOGOS = [
           "opcoes": [
             5,
             3,
-            6,
-            4
+            4,
+            6
           ]
         }
       ]
@@ -1662,10 +1662,10 @@ window.MB_JOGOS = [
           "pergunta": "O João é mais alto que a Ana. A Ana é mais alta que o Rui. Quem é o mais baixo?",
           "resposta": "Rui",
           "opcoes": [
-            "Rui",
             "João",
             "Ana",
-            "ninguém"
+            "ninguém",
+            "Rui"
           ]
         },
         {
@@ -1673,9 +1673,9 @@ window.MB_JOGOS = [
           "pergunta": "A Maria é mais velha que o Tó. O Tó é mais velho que a Sara. Quem é o mais velho?",
           "resposta": "Maria",
           "opcoes": [
-            "Maria",
             "Tó",
             "Sara",
+            "Maria",
             "ninguém"
           ]
         },
@@ -1684,8 +1684,8 @@ window.MB_JOGOS = [
           "pergunta": "O gato corre mais que o cão. O cão corre mais que a tartaruga. Quem é o mais lento?",
           "resposta": "a tartaruga",
           "opcoes": [
-            "a tartaruga",
             "o gato",
+            "a tartaruga",
             "o cão",
             "ninguém"
           ]
@@ -1708,10 +1708,10 @@ window.MB_JOGOS = [
           "pergunta": "A caixa azul é mais pesada que a verde. A verde é mais pesada que a vermelha. Qual é a mais leve?",
           "resposta": "a vermelha",
           "opcoes": [
-            "a vermelha",
             "a azul",
             "a verde",
-            "são iguais"
+            "são iguais",
+            "a vermelha"
           ]
         },
         {
@@ -1719,9 +1719,9 @@ window.MB_JOGOS = [
           "pergunta": "Se hoje é terça-feira, que dia foi anteontem?",
           "resposta": "domingo",
           "opcoes": [
-            "domingo",
             "segunda",
             "sábado",
+            "domingo",
             "quinta"
           ]
         }
@@ -1732,8 +1732,8 @@ window.MB_JOGOS = [
           "pergunta": "Ana, Bea e Rui: a Ana não é a mais alta nem a mais baixa; o Rui é o mais alto. Quem é o mais baixo?",
           "resposta": "Bea",
           "opcoes": [
-            "Bea",
             "Ana",
+            "Bea",
             "Rui",
             "ninguém"
           ]
@@ -1754,10 +1754,10 @@ window.MB_JOGOS = [
           "pergunta": "Todos os Zims são azuis. O Ploc é um Zim. Então o Ploc é...",
           "resposta": "azul",
           "opcoes": [
-            "azul",
             "verde",
             "não se sabe",
-            "vermelho"
+            "vermelho",
+            "azul"
           ]
         }
       ]
