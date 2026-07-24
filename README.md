@@ -2,47 +2,47 @@
 
 **Jogos educativos para os 8 aos 10 anos (3.º/4.º ano)** · Buinho FabLab, Messejana, Alentejo
 
-Dez jogos — cinco sobre biofabricação (resíduos agroalimentares → materiais) e
-cinco de **Matemática do 4.º ano** — com uma mascote que dá pistas em português
-de Portugal.
+**15 jogos:** 5 sobre biofabricação (resíduos agroalimentares → materiais) e
+**10 de Matemática do 4.º ano**, estes com **cronómetro** e **3 níveis de
+dificuldade**. Mascote que dá pistas em português de Portugal.
 
 > ⚠️ **Estado: protótipo por validar (enquadramento pedagógico).**
-> - Jogos 1–5: as doses do Jogo 1 aguardam validação do agente Magalhães contra
->   `strategy/biofabricacao-receitas.md` (regra selada: proporção pela ÁGUA).
-> - Jogos 6–10 (Matemática): **a matemática está verificada em código**
->   (`testes/verificar-matematica.js`), mas o **enquadramento didáctico**
->   (progressão, redacção dos enunciados) aguarda validação do Magalhães.
+> - Biofabricação: as doses do Jogo 1 aguardam validação do agente Magalhães.
+> - Matemática: **toda a matemática está verificada em código**
+>   (`testes/gerar-dados-mat.js`, 90 perguntas), mas o **enquadramento didáctico**
+>   (progressão, redacção, tempos do cronómetro) aguarda validação do Magalhães.
 >
 > **Não usar como material didáctico antes dessa validação.**
 
 ---
 
-## Os dez jogos
+## Os 15 jogos
 
-**Biofabricação (1–5)**
+**Biofabricação (5)** — A Receita Certa · Do Lixo ao Material · Conta a Colheita ·
+Circular ou Linear? · Desenha a tua Folha (com IA).
 
-| # | Jogo | Competência |
-|---|---|---|
-| 1 | A Receita Certa | Medir e pesar |
-| 2 | Do Lixo ao Material | Sequência e correspondência |
-| 3 | Conta a Colheita | Cálculo mental |
-| 4 | Circular ou Linear? | Raciocínio |
-| 5 | Desenha a tua Folha | Criatividade (com IA) |
+**Matemática — 4.º ano (10, com cronómetro + 3 níveis)** · ancorados nas
+Aprendizagens Essenciais (`strategy/ubbu-ae-sobreposicao.md`) e no programa
+oficial (matematica.pt). Dados em `static/js/dados-mat.js` (gerado e verificado).
 
-**Matemática — 4.º ano, nível exigente (6–10)** · ancorados nas Aprendizagens Essenciais (`strategy/ubbu-ae-sobreposicao.md`) e no programa oficial (matematica.pt). Exigem CONTA, não reconhecimento.
+| Jogo | O que treina |
+|---|---|
+| Multiplicação | tabuadas → 2 dígitos × 1 |
+| Divisão | divisão exata e com resto |
+| Frações | fração de uma quantidade, equivalência |
+| Decimais | ×÷ por 10/100, comparar, somar |
+| Dinheiro | somar preços, troco, multi-passo |
+| Perímetro e Área | perímetro, área e inverso (área→lado) |
+| Sequências | ×2, quadrados, decrescentes, saltos que crescem |
+| Ângulos | reto/agudo/obtuso, voltas → graus |
+| Gráficos | pictograma com escala, diferenças, fração do total |
+| Problemas | cálculo mental e problemas de vários passos |
 
-| # | Jogo | Domínio AE | O que treina | ⏱ |
-|---|---|---|---|---|
-| 6 | Fatias Certas | Números e Operações | **fração de uma quantidade** (¾ de 12 = 9): apanhar do conjunto | — |
-| 7 | A Feira | Números / Medida | **troco** com decimais, dois passos (paga − preço, compor o troco) | — |
-| 8 | A Horta Cercada | Geometria e Medida | **perímetro, área e inverso** (área→lado) com medidas | ✓ |
-| 9 | Castelos na Areia | Álgebra | sequências **×2 / quadrados / decrescentes** | ✓ |
-| 10 | O Gráfico da Turma | Org. e Tratamento de Dados | **pictograma com escala**, multipasso, fração do total | ✓ |
-
-Dificuldade calibrada a pedido do Carlos ("fáceis demais para 9 anos"),
-olhando o Hypatiamat e o programa oficial. Os jogos 8–10 têm **cronómetro**
-com tempo limite por ronda (estilo Hypatiamat). Tema visual "mundo Buinho",
-mas contextos variados do quotidiano — não só biofabricação.
+**Estrutura de cada jogo de matemática:** 3 níveis × 3 rounds (9 perguntas).
+Cronómetro por nível — **Nível 1: 25 s · Nível 2: 18 s · Nível 3: 10 s**.
+Acertar as 3 perguntas sobe de nível; **errar ou esgotar o tempo faz descer um
+nível**. Calibrado a pedido do Carlos (os primeiros jogos estavam fáceis demais)
+olhando o Hypatiamat e o programa oficial.
 
 ## Como correr
 

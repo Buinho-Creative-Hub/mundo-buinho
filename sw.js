@@ -9,13 +9,14 @@
    - /api/*  -> NUNCA em cache (respostas da mascote são sempre frescas;
                 se a rede falhar, o cliente já tem os seus próprios fallbacks) */
 
-const CACHE = 'mundo-buinho-v5';   // v5: jogos 6-10 reforçados (dificuldade 4.º + cronómetro) 24 Jul 2026
+const CACHE = 'mundo-buinho-v6';   // v6: 10 jogos de matemática com níveis + cronómetro 24 Jul 2026
 
 const ESTATICOS = [
   './',
   './index.html',
   './static/css/mundo.css',
   './static/js/dados.js',
+  './static/js/dados-mat.js',
   './static/js/nucleo.js',
   './static/js/jogos.js',
   './static/manifest.json',

@@ -8,7 +8,7 @@
   'use strict';
 
   // ---------------------------------------------------------------- estado
-  const estadoInicial = () => ({
+  const estadoInicial = () => Object.assign({
     ecra: 'home',
     som: true,
     mascote: { aberta: false, aCarregar: false, texto: '' },
@@ -17,13 +17,16 @@
     g2: { fase: 'ordem', slots: [null, null, null, null], pool: baralhar([0, 1, 2, 3]), ligados: {} },
     g3: { idx: 0, errado: null, aResolver: false },
     g4: { idx: 0, terminado: false },
-    g5: { desafioIdx: 0, cor: '#6B8F3E', espessura: 8 },
-    g6: { idx: 0, apanhadas: [], aResolver: false },     // índices de objectos apanhados (fração de quantidade)
-    g7: { idx: 0, escolhidas: [], aResolver: false },    // índices do tabuleiro escolhidos (troco)
-    g8: { idx: 0, errado: null, aResolver: false },      // MC: perímetro/área/inverso ⏱
-    g9: { idx: 0, errado: null, aResolver: false },      // MC: sequências ⏱
-    g10: { idx: 0, errado: null, aResolver: false }      // MC: gráficos ⏱
-  });
+    g5: { desafioIdx: 0, cor: '#6B8F3E', espessura: 8 }
+  }, estadoQuiz());
+
+  // Estado dos 10 jogos de matemática (motor de quiz com níveis + cronómetro).
+  // Cada jogo: nivel 0..2, round 0..2. Ao perder, desce um nível (round=0).
+  function estadoQuiz() {
+    const q = {};
+    for (let i = 1; i <= 10; i++) q['q' + i] = { nivel: 0, round: 0, errado: null, aResolver: false };
+    return q;
+  }
 
   let S = estadoInicial();
   const ouvintes = [];

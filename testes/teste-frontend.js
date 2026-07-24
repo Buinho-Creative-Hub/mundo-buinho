@@ -34,7 +34,7 @@ window.HTMLCanvasElement.prototype.toDataURL = () => 'data:image/png;base64,AAAA
 window.fetch = async () => ({ json: async () => ({ texto: 'pista de teste', fonte: 'mock' }) });
 
 // carregar os scripts pela ordem do index.html
-['static/js/dados.js', 'static/js/nucleo.js', 'static/js/jogos.js'].forEach(f => {
+['static/js/dados.js', 'static/js/dados-mat.js', 'static/js/nucleo.js', 'static/js/jogos.js'].forEach(f => {
   window.eval(fs.readFileSync(path.join(B, f), 'utf8'));
 });
 window.document.dispatchEvent(new window.Event('DOMContentLoaded'));
@@ -60,7 +60,8 @@ function clicar(el) {
 grupo('ARRANQUE');
 ok($('#app').innerHTML.length > 500, 'render inicial produz HTML');
 ok(MB.estado().ecra === 'home', 'ecrã inicial é home');
-ok($$('.nivel').length === 10, 'mapa mostra 10 níveis (tem ' + $$('.nivel').length + ')');
+ok($$('.nivel').length === 15, 'mapa mostra 15 tiles: 5 biofab + 10 matemática (tem ' + $$('.nivel').length + ')');
+ok(window.MB_JOGOS && window.MB_JOGOS.length === 10, 'há 10 jogos de matemática em MB_JOGOS');
 
 // níveis dentro da altura do mapa
 const alturaMapa = parseInt($('.mapa').style.height);
@@ -185,104 +186,56 @@ const esperar = ms => new Promise(r => setTimeout(r, ms));
   ok($('#tela') !== telaAntes, 'sair e voltar ao jogo cria canvas novo (tela limpa)');
 
   // ==================================================================
-  // JOGOS DE MATEMÁTICA — 4.º ano (6–10)
+  // MOTOR DE QUIZ — 10 jogos de matemática (q1..q10)
   // ==================================================================
+  grupo('MOTOR DE QUIZ — níveis, cronómetro e descida ao perder');
 
-  // -------------------------------------------------------- Jogo 6 (fração de quantidade)
-  grupo('JOGO 6 — Fatias Certas (fração de uma quantidade)');
-  MB.ir('g6');
-  const p6 = D.g6[0];
-  ok($$('.fruto').length === p6.total, 'g6 mostra ' + p6.total + ' objectos no 1º problema');
-  // apanhar exactamente `resposta` = num/den*total
-  for (let i = 0; i < p6.resposta; i++) clicar($('[data-accao="g6-apanhar"][data-i="' + i + '"]'));
-  ok(MB.estado().g6.apanhadas.length === p6.resposta, 'apanha ' + p6.resposta + ' (=' + p6.rotulo + ' de ' + p6.total + ')');
-  clicar($('[data-accao="g6-verificar"]'));
-  ok(MB.estado().celebracao !== null, 'quantidade certa dispara celebração');
-  await esperar(1200);
-  ok(MB.estado().g6.idx === 1, 'avança para o problema 2 (idx=' + MB.estado().g6.idx + ')');
-  // errado: apanhar a menos
-  clicar($('[data-accao="g6-apanhar"][data-i="0"]'));
-  clicar($('[data-accao="g6-verificar"]'));
-  await esperar(50);
-  ok(MB.estado().mascote.aberta, 'quantidade errada abre a mascote');
-
-  // -------------------------------------------------------- Jogo 7 (troco)
-  grupo('JOGO 7 — A Feira (troco com decimais)');
-  MB.fecharMascote();
-  MB.ir('g7');
-  ok($$('.moeda').length === D.g7[0].tabuleiro.length, 'g7 mostra o tabuleiro de moedas');
-  // dar o troco exacto (força bruta sobre o tabuleiro)
-  function subsetQuePaga(vals, alvo) {
-    for (let m = 1; m < (1 << vals.length); m++) {
-      let s = 0, idx = [];
-      for (let b = 0; b < vals.length; b++) if (m & (1 << b)) { s += vals[b]; idx.push(b); }
-      if (s === alvo) return idx;
-    }
-    return null;
+  function jogoDe(gid) { return window.MB_JOGOS.find(j => j.id === gid); }
+  function respostaActual(gid) { const s = MB.estado()[gid]; return jogoDe(gid).niveis[s.nivel][s.round].resposta; }
+  function clicarCerto(gid) {
+    const r = respostaActual(gid);
+    const b = $$('[data-accao="quiz-resp"]').find(x => x.dataset.v === String(r));
+    clicar(b);
   }
-  const idx7 = subsetQuePaga(D.g7[0].tabuleiro, D.g7[0].troco);
-  ok(!!idx7, 'existe combinação para o troco de ' + D.g7[0].troco + ' cêntimos');
-  idx7.forEach(i => clicar($('[data-accao="g7-moeda"][data-i="' + i + '"]')));
-  clicar($('[data-accao="g7-pagar"]'));
-  ok(MB.estado().celebracao !== null, 'troco certo dispara celebração');
-  await esperar(1100);
-  ok(MB.estado().g7.idx === 1, 'avança para a compra 2');
-  // troco vazio = errado
-  clicar($('[data-accao="g7-pagar"]'));
-  await esperar(50);
-  ok(MB.estado().mascote.aberta, 'troco errado abre a mascote');
 
-  // -------------------------------------------------------- Jogo 8 (perímetro/área/inverso)
-  grupo('JOGO 8 — A Horta Cercada (perímetro/área/inverso)');
-  MB.fecharMascote();
-  MB.ir('g8');
-  ok($$('[data-accao="g8-resp"]').length === 4, 'g8 mostra 4 opções');
-  ok(!!$('#timer-barra'), 'g8 mostra a barra do cronómetro');
-  const btn8 = $$('[data-accao="g8-resp"]').find(b => +b.dataset.v === D.g8[0].resposta);
-  ok(!!btn8, 'existe botão com a resposta certa (' + D.g8[0].resposta + ')');
-  clicar(btn8);
-  ok(MB.estado().celebracao !== null, 'resposta certa dispara celebração');
-  await esperar(1000);
-  ok(MB.estado().g8.idx === 1, 'avança para a horta 2');
-  const btn8e = $$('[data-accao="g8-resp"]').find(b => +b.dataset.v !== D.g8[1].resposta);
-  clicar(btn8e);
-  await esperar(50);
-  ok(MB.estado().mascote.aberta, 'resposta errada abre a mascote');
+  MB.ir('q1');
+  ok(MB.estado().ecra === 'q1', 'entra no jogo q1');
+  ok(!!$('#timer-barra'), 'q1 tem barra de cronómetro');
+  ok($$('[data-accao="quiz-resp"]').length === 4, 'q1 mostra 4 opções');
+  ok($$('.qnivel').length === 3, 'mostra os 3 níveis no progresso');
 
-  // -------------------------------------------------------- Jogo 9 (sequências)
-  grupo('JOGO 9 — Castelos na Areia (sequências)');
-  MB.fecharMascote();
-  MB.ir('g9');
-  ok($$('.castelo-col').length === D.g9[0].termos.length + 1, 'g9 mostra os castelos + o incógnito');
-  ok(!!$('#timer-barra'), 'g9 mostra a barra do cronómetro');
-  const btn9 = $$('[data-accao="g9-resp"]').find(b => +b.dataset.v === D.g9[0].resposta);
-  ok(!!btn9, 'existe botão com o próximo termo certo (' + D.g9[0].resposta + ')');
-  clicar(btn9);
-  ok(MB.estado().celebracao !== null, 'próximo termo certo dispara celebração');
-  await esperar(1000);
-  ok(MB.estado().g9.idx === 1, 'avança para a sequência 2');
-  const btn9errado = $$('[data-accao="g9-resp"]').find(b => +b.dataset.v !== D.g9[1].resposta);
-  clicar(btn9errado);
-  await esperar(50);
-  ok(MB.estado().mascote.aberta, 'termo errado abre a mascote');
+  // acertar os 3 rounds do nível 1 -> sobe ao nível 2
+  clicarCerto('q1'); await esperar(900);
+  ok(MB.estado().q1.round === 1, 'acertar avança de round (round=1)');
+  clicarCerto('q1'); await esperar(900);
+  clicarCerto('q1'); await esperar(1300);
+  ok(MB.estado().q1.nivel === 1 && MB.estado().q1.round === 0, 'completar 3 rounds sobe ao nível 2');
 
-  // -------------------------------------------------------- Jogo 10 (dados)
-  grupo('JOGO 10 — O Gráfico da Turma (dados)');
+  // errar no nível 2 -> desce ao nível 1 + mascote
+  const rq1 = respostaActual('q1');
+  clicar($$('[data-accao="quiz-resp"]').find(x => x.dataset.v !== String(rq1)));
+  await esperar(800);
+  ok(MB.estado().q1.nivel === 0 && MB.estado().q1.round === 0, 'errar no nível 2 desce ao nível 1');
+  ok(MB.estado().mascote.aberta, 'ao descer de nível abre a mascote');
   MB.fecharMascote();
-  MB.ir('g10');
-  ok($$('.pic-linha').length === D.g10[0].dados.length, 'g10 desenha o pictograma (1 linha por categoria)');
-  const btn10 = $$('[data-accao="g10-resp"]').find(b => b.dataset.v === String(D.g10[0].resposta));
-  ok(!!btn10, 'existe botão com a resposta certa do pictograma (' + D.g10[0].resposta + ')');
-  clicar(btn10);
-  ok(MB.estado().celebracao !== null, 'leitura certa do pictograma dispara celebração');
-  await esperar(1000);
-  ok(MB.estado().g10.idx === 1, 'avança para o gráfico 2 (barras)');
-  ok($$('.graf-bar').length === D.g10[1].dados.length, 'o gráfico 2 usa barras');
-  const btn10errado = $$('[data-accao="g10-resp"]').find(b => b.dataset.v !== String(D.g10[1].resposta));
-  clicar(btn10errado);
-  await esperar(50);
-  ok(MB.estado().mascote.aberta, 'resposta errada abre a mascote');
-  MB.fecharMascote();
+
+  // completar o jogo inteiro (9 acertos) -> volta ao mapa
+  MB.ir('q2');
+  for (let k = 0; k < 9; k++) { clicarCerto('q2'); await esperar(k % 3 === 2 ? 1300 : 900); }
+  await esperar(500);
+  ok(MB.estado().ecra === 'home', 'completar os 3 níveis volta ao mapa');
+
+  // visuais
+  grupo('QUIZ — visuais');
+  MB.ir('q6'); ok(!!$('.horta-svg'), 'q6 (Perímetro/Área) desenha o retângulo com medidas');
+  MB.ir('q7'); ok($$('.castelo-col').length >= 4, 'q7 (Sequências) desenha as barras da sequência');
+  MB.ir('q8'); ok(!!$('.angulo-svg') || $$('[data-accao="quiz-resp"]').length === 4, 'q8 (Ângulos) mostra o ângulo/opções');
+  MB.ir('q9');
+  const linhas9 = $$('.pic-linha');
+  ok(linhas9.length === 3, 'q9 (Gráficos) 1ª ronda é pictograma com 3 linhas');
+  const icones9 = linhas9.map(l => (l.querySelector('.pic-simb') || {}).textContent);
+  ok(new Set(icones9).size >= 2, 'as linhas do pictograma usam ícones DIFERENTES (maçã/banana/pera), não todos iguais');
+  MB.ir('home');
 
   // -------------------------------------------------------- Cronómetro (núcleo)
   grupo('CRONÓMETRO');
