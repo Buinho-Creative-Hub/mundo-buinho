@@ -2,9 +2,11 @@
 
 **Jogos educativos para os 8 aos 10 anos (3.º/4.º ano)** · Buinho FabLab, Messejana, Alentejo
 
-**15 jogos:** 5 sobre biofabricação (resíduos agroalimentares → materiais) e
-**10 de Matemática do 4.º ano**, estes com **cronómetro** e **3 níveis de
-dificuldade**. Mascote que dá pistas em português de Portugal.
+**Menu por categorias** (Multiplicação, Divisão, Frações, Decimais, Dinheiro,
+Geometria, Sequências, Gráficos, **Lógica**, Problemas, Biofabricação) — dentro de
+cada categoria, um ou mais jogos, à Hypatiamat. Ao todo **13 jogos de
+matemática/lógica** (com **cronómetro** e **3 níveis de dificuldade**) + **5 de
+biofabricação**. Mascote que dá pistas em português de Portugal.
 
 > ⚠️ **Estado: protótipo por validar (enquadramento pedagógico).**
 > - Biofabricação: as doses do Jogo 1 aguardam validação do agente Magalhães.

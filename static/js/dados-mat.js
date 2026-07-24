@@ -1,6 +1,6 @@
-/* Mundo Buinho — jogos de matemática 4.º ano (10 jogos × 3 níveis × 3 rounds)
-   GERADO por testes/gerar-dados-mat.js — não editar à mão; toda a matemática
-   está verificada em código. Nível: L1 25s, L2 18s, L3 10s. Descer de nível ao perder. */
+/* Mundo Buinho — jogos de matemática e lógica 4.º ano (13 jogos × 3 níveis × 3 rounds)
+   GERADO por testes/gerar-dados-mat.js — não editar à mão; tudo verificado em código.
+   Nível: L1 25s, L2 18s, L3 10s. Descer de nível ao perder. */
 window.MB_JOGOS = [
   {
     "id": "q1",
@@ -1422,6 +1422,342 @@ window.MB_JOGOS = [
             39,
             42,
             40
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "id": "q11",
+    "nome": "Padrões",
+    "icone": "🧩",
+    "niveis": [
+      [
+        {
+          "visual": "nenhum",
+          "pergunta": "O que vem a seguir?   🔺 🔵 🔺 🔵 🔺  __",
+          "resposta": "🔵",
+          "opcoes": [
+            "🔵",
+            "🔺",
+            "🟢",
+            "🟡"
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "O que vem a seguir?   🟢 🟡 🟢 🟡 🟢  __",
+          "resposta": "🟡",
+          "opcoes": [
+            "🟡",
+            "🟢",
+            "🔵",
+            "🔴"
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "O que vem a seguir?   ⭐ 🌙 ⭐ 🌙 ⭐  __",
+          "resposta": "🌙",
+          "opcoes": [
+            "🌙",
+            "⭐",
+            "☀️",
+            "☁️"
+          ]
+        }
+      ],
+      [
+        {
+          "visual": "nenhum",
+          "pergunta": "O que vem a seguir?   🔴 🔵 🟢 🔴 🔵 🟢 🔴  __",
+          "resposta": "🔵",
+          "opcoes": [
+            "🔵",
+            "🔴",
+            "🟢",
+            "🟡"
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "O que vem a seguir?   🐶 🐱 🐭 🐶 🐱 🐭 🐶  __",
+          "resposta": "🐱",
+          "opcoes": [
+            "🐱",
+            "🐶",
+            "🐭",
+            "🐰"
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "O que vem a seguir?   🟦 🟦 🟥 🟦 🟦 🟥  __",
+          "resposta": "🟦",
+          "opcoes": [
+            "🟦",
+            "🟥",
+            "🟩",
+            "🟨"
+          ]
+        }
+      ],
+      [
+        {
+          "visual": "nenhum",
+          "pergunta": "O que vem a seguir?   🌑 🌒 🌓 🌔  __",
+          "resposta": "🌕",
+          "opcoes": [
+            "🌕",
+            "🌑",
+            "🌘",
+            "🌗"
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "O que vem a seguir?   🔺 🔺 🔵 🔺 🔺 🔵 🔺 🔺  __",
+          "resposta": "🔵",
+          "opcoes": [
+            "🔵",
+            "🔺",
+            "🟢",
+            "🟣"
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "O que vem a seguir?   1️⃣ 3️⃣ 5️⃣ 7️⃣  __",
+          "resposta": "9️⃣",
+          "opcoes": [
+            "9️⃣",
+            "8️⃣",
+            "6️⃣",
+            "🔟"
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "id": "q12",
+    "nome": "Adivinha o número",
+    "icone": "🔮",
+    "niveis": [
+      [
+        {
+          "visual": "nenhum",
+          "pergunta": "Penso num número. Somo-lhe 3 e dá 10. Que número é?",
+          "resposta": 7,
+          "opcoes": [
+            8,
+            7,
+            6,
+            9
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "O dobro do número é 8. Que número é?",
+          "resposta": 4,
+          "opcoes": [
+            5,
+            3,
+            4,
+            6
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "Tiro-lhe 5 e fica 6. Que número é?",
+          "resposta": 11,
+          "opcoes": [
+            12,
+            10,
+            13,
+            11
+          ]
+        }
+      ],
+      [
+        {
+          "visual": "nenhum",
+          "pergunta": "Somo-lhe 7 e dá 15. Que número é?",
+          "resposta": 8,
+          "opcoes": [
+            9,
+            8,
+            7,
+            10
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "A metade dele é 9. Que número é?",
+          "resposta": 18,
+          "opcoes": [
+            19,
+            17,
+            18,
+            20
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "É par, maior que 4 e menor que 8. Que número é?",
+          "resposta": 6,
+          "opcoes": [
+            6,
+            5,
+            7,
+            8
+          ]
+        }
+      ],
+      [
+        {
+          "visual": "nenhum",
+          "pergunta": "Multiplicado por 3 dá 21. Que número é?",
+          "resposta": 7,
+          "opcoes": [
+            8,
+            7,
+            6,
+            9
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "É par, maior que 20 e menor que 24. Que número é?",
+          "resposta": 22,
+          "opcoes": [
+            22,
+            21,
+            23,
+            24
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "Se lhe somar o dobro dele, dá 12. Que número é?",
+          "resposta": 4,
+          "opcoes": [
+            5,
+            3,
+            6,
+            4
+          ]
+        }
+      ]
+    ]
+  },
+  {
+    "id": "q13",
+    "nome": "Quem é?",
+    "icone": "🕵️",
+    "niveis": [
+      [
+        {
+          "visual": "nenhum",
+          "pergunta": "O João é mais alto que a Ana. A Ana é mais alta que o Rui. Quem é o mais baixo?",
+          "resposta": "Rui",
+          "opcoes": [
+            "Rui",
+            "João",
+            "Ana",
+            "ninguém"
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "A Maria é mais velha que o Tó. O Tó é mais velho que a Sara. Quem é o mais velho?",
+          "resposta": "Maria",
+          "opcoes": [
+            "Maria",
+            "Tó",
+            "Sara",
+            "ninguém"
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "O gato corre mais que o cão. O cão corre mais que a tartaruga. Quem é o mais lento?",
+          "resposta": "a tartaruga",
+          "opcoes": [
+            "a tartaruga",
+            "o gato",
+            "o cão",
+            "ninguém"
+          ]
+        }
+      ],
+      [
+        {
+          "visual": "nenhum",
+          "pergunta": "Na fila, à frente do Pedro está a Rita e atrás do Pedro está o Nuno. Quem está no meio?",
+          "resposta": "Pedro",
+          "opcoes": [
+            "Pedro",
+            "Rita",
+            "Nuno",
+            "ninguém"
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "A caixa azul é mais pesada que a verde. A verde é mais pesada que a vermelha. Qual é a mais leve?",
+          "resposta": "a vermelha",
+          "opcoes": [
+            "a vermelha",
+            "a azul",
+            "a verde",
+            "são iguais"
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "Se hoje é terça-feira, que dia foi anteontem?",
+          "resposta": "domingo",
+          "opcoes": [
+            "domingo",
+            "segunda",
+            "sábado",
+            "quinta"
+          ]
+        }
+      ],
+      [
+        {
+          "visual": "nenhum",
+          "pergunta": "Ana, Bea e Rui: a Ana não é a mais alta nem a mais baixa; o Rui é o mais alto. Quem é o mais baixo?",
+          "resposta": "Bea",
+          "opcoes": [
+            "Bea",
+            "Ana",
+            "Rui",
+            "ninguém"
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "Num saco há 3 bolas vermelhas e 1 azul. Tiras uma sem ver. Qual é mais provável?",
+          "resposta": "vermelha",
+          "opcoes": [
+            "vermelha",
+            "azul",
+            "igual",
+            "nenhuma"
+          ]
+        },
+        {
+          "visual": "nenhum",
+          "pergunta": "Todos os Zims são azuis. O Ploc é um Zim. Então o Ploc é...",
+          "resposta": "azul",
+          "opcoes": [
+            "azul",
+            "verde",
+            "não se sabe",
+            "vermelho"
           ]
         }
       ]

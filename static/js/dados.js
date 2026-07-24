@@ -75,22 +75,38 @@ window.MB_DADOS = {
   // testes/gerar-dados-mat.js. Aqui ficam só os 5 jogos de biofabricação.
 
   // -------------------------------------------------- Mapa de níveis (home)
-  // 5 jogos de biofabricação (g1–g5) + 10 de matemática (q1–q10, motor de quiz).
-  niveis: [
-    { n: 1,  ecra: 'g1',  nome: 'A Receita Certa',     tema: 'Medir e pesar',   icone: '🥣', cor: '#2038A6', sombra: '#16296f', x: '25%',   y: 274 },
-    { n: 2,  ecra: 'g2',  nome: 'Do Lixo ao Material', tema: 'Sequência',       icone: '♻️', cor: '#6B8F3E', sombra: '#55722f', x: '75%',   y: 474 },
-    { n: 3,  ecra: 'g3',  nome: 'Conta a Colheita',    tema: 'Cálculo mental',  icone: '🍊', cor: '#FA6415', sombra: '#b23c0a', x: '26.5%', y: 694 },
-    { n: 4,  ecra: 'g4',  nome: 'Circular ou Linear?', tema: 'Raciocínio',      icone: '🌍', cor: '#2038A6', sombra: '#16296f', x: '74%',   y: 874 },
-    { n: 5,  ecra: 'g5',  nome: 'Desenha a tua Folha', tema: 'Criatividade',    icone: '🎨', cor: '#6B8F3E', sombra: '#55722f', x: '50%',   y: 1054 },
-    { n: 6,  ecra: 'q1',  nome: 'Multiplicação',       tema: 'Tabuadas ⏱',      icone: '✖️', cor: '#FA6415', sombra: '#b23c0a', x: '74%',   y: 1254 },
-    { n: 7,  ecra: 'q2',  nome: 'Divisão',             tema: 'Dividir ⏱',       icone: '➗', cor: '#2038A6', sombra: '#16296f', x: '26.5%', y: 1454 },
-    { n: 8,  ecra: 'q3',  nome: 'Frações',             tema: 'Partes ⏱',        icone: '🍕', cor: '#6B8F3E', sombra: '#55722f', x: '74%',   y: 1654 },
-    { n: 9,  ecra: 'q4',  nome: 'Decimais',            tema: 'Vírgulas ⏱',      icone: '🔢', cor: '#FA6415', sombra: '#b23c0a', x: '27%',   y: 1854 },
-    { n: 10, ecra: 'q5',  nome: 'Dinheiro',            tema: 'Euros ⏱',         icone: '🪙', cor: '#2038A6', sombra: '#16296f', x: '50%',   y: 2054 },
-    { n: 11, ecra: 'q6',  nome: 'Perímetro e Área',    tema: 'Medir ⏱',         icone: '📐', cor: '#6B8F3E', sombra: '#55722f', x: '74%',   y: 2254 },
-    { n: 12, ecra: 'q7',  nome: 'Sequências',          tema: 'Padrões ⏱',       icone: '🏰', cor: '#FA6415', sombra: '#b23c0a', x: '26.5%', y: 2454 },
-    { n: 13, ecra: 'q8',  nome: 'Ângulos',             tema: 'Voltas ⏱',        icone: '🧭', cor: '#2038A6', sombra: '#16296f', x: '74%',   y: 2654 },
-    { n: 14, ecra: 'q9',  nome: 'Gráficos',            tema: 'Dados ⏱',         icone: '📊', cor: '#6B8F3E', sombra: '#55722f', x: '27%',   y: 2854 },
-    { n: 15, ecra: 'q10', nome: 'Problemas',           tema: 'Pensar ⏱',        icone: '🧠', cor: '#FA6415', sombra: '#b23c0a', x: '50%',   y: 3054 }
+  // MENU POR CATEGORIAS. Cada categoria tem os seus jogos; dá para crescer
+  // (vários tipos de jogo por categoria, como o Hypatiamat). Os jogos de
+  // matemática/lógica (ecra q*) vêm de MB_JOGOS; os biofab (g*) de MB_DADOS.
+  categorias: [
+    { id: 'mult', nome: 'Multiplicação', icone: '✖️', cor: '#FA6415', sombra: '#b23c0a',
+      jogos: [{ ecra: 'q1', nome: 'Tabuadas', sub: '× até 2 dígitos' }] },
+    { id: 'div', nome: 'Divisão', icone: '➗', cor: '#2038A6', sombra: '#16296f',
+      jogos: [{ ecra: 'q2', nome: 'Dividir', sub: 'exacta e com resto' }] },
+    { id: 'fracoes', nome: 'Frações', icone: '🍕', cor: '#6B8F3E', sombra: '#55722f',
+      jogos: [{ ecra: 'q3', nome: 'Partes de um todo', sub: 'fração de uma quantidade' }] },
+    { id: 'decimais', nome: 'Decimais', icone: '🔢', cor: '#FA6415', sombra: '#b23c0a',
+      jogos: [{ ecra: 'q4', nome: 'Vírgulas', sub: '×÷ 10 e 100, comparar' }] },
+    { id: 'dinheiro', nome: 'Dinheiro', icone: '🪙', cor: '#2038A6', sombra: '#16296f',
+      jogos: [{ ecra: 'q5', nome: 'Euros e trocos', sub: 'somar preços, troco' }] },
+    { id: 'geometria', nome: 'Geometria', icone: '📐', cor: '#6B8F3E', sombra: '#55722f',
+      jogos: [{ ecra: 'q6', nome: 'Perímetro e Área', sub: 'medir a horta' },
+              { ecra: 'q8', nome: 'Ângulos', sub: 'voltas e graus' }] },
+    { id: 'sequencias', nome: 'Sequências', icone: '🏰', cor: '#FA6415', sombra: '#b23c0a',
+      jogos: [{ ecra: 'q7', nome: 'Padrões que crescem', sub: '×2, quadrados...' }] },
+    { id: 'graficos', nome: 'Gráficos', icone: '📊', cor: '#2038A6', sombra: '#16296f',
+      jogos: [{ ecra: 'q9', nome: 'Ler dados', sub: 'pictograma e barras' }] },
+    { id: 'logica', nome: 'Lógica', icone: '🧩', cor: '#6B8F3E', sombra: '#55722f',
+      jogos: [{ ecra: 'q11', nome: 'Padrões', sub: 'o que vem a seguir' },
+              { ecra: 'q12', nome: 'Adivinha o número', sub: 'pistas e enigmas' },
+              { ecra: 'q13', nome: 'Quem é?', sub: 'raciocínio e dedução' }] },
+    { id: 'problemas', nome: 'Problemas', icone: '🧠', cor: '#FA6415', sombra: '#b23c0a',
+      jogos: [{ ecra: 'q10', nome: 'Problemas', sub: 'vários passos' }] },
+    { id: 'biofab', nome: 'Biofabricação', icone: '🌱', cor: '#6B8F3E', sombra: '#55722f',
+      jogos: [{ ecra: 'g1', nome: 'A Receita Certa', sub: 'medir e pesar' },
+              { ecra: 'g2', nome: 'Do Lixo ao Material', sub: 'sequência' },
+              { ecra: 'g3', nome: 'Conta a Colheita', sub: 'cálculo mental' },
+              { ecra: 'g4', nome: 'Circular ou Linear?', sub: 'raciocínio' },
+              { ecra: 'g5', nome: 'Desenha a tua Folha', sub: 'criatividade + IA' }] }
   ]
 };

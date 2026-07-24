@@ -60,22 +60,28 @@ function clicar(el) {
 grupo('ARRANQUE');
 ok($('#app').innerHTML.length > 500, 'render inicial produz HTML');
 ok(MB.estado().ecra === 'home', 'ecrã inicial é home');
-ok($$('.nivel').length === 15, 'mapa mostra 15 tiles: 5 biofab + 10 matemática (tem ' + $$('.nivel').length + ')');
-ok(window.MB_JOGOS && window.MB_JOGOS.length === 10, 'há 10 jogos de matemática em MB_JOGOS');
+ok($$('.cat-card').length === D.categorias.length, 'home mostra ' + D.categorias.length + ' categorias (tem ' + $$('.cat-card').length + ')');
+ok(window.MB_JOGOS && window.MB_JOGOS.length === 13, 'há 13 jogos de matemática/lógica em MB_JOGOS');
+ok(D.categorias.find(c => c.id === 'logica').jogos.length === 3, 'a categoria Lógica tem 3 jogos');
+ok(D.categorias.find(c => c.id === 'geometria').jogos.length === 2, 'a categoria Geometria tem 2 jogos');
 
-// níveis dentro da altura do mapa
-const alturaMapa = parseInt($('.mapa').style.height);
-const maxY = Math.max(...D.niveis.map(n => n.y));
-ok(maxY < alturaMapa, `nível mais baixo (y=${maxY}) cabe no mapa (${alturaMapa}px)`);
-
-// ---------------------------------------------------------------- navegação
-grupo('NAVEGAÇÃO');
+// ---------------------------------------------------------------- navegação por categorias
+grupo('NAVEGAÇÃO (categorias → jogo → voltar)');
+clicar($('[data-accao="ir-cat"][data-cat="biofab"]'));
+ok(MB.estado().ecra === 'cat:biofab', 'abrir categoria Biofabricação');
+ok($$('.jogo-card').length === 5, 'a categoria Biofabricação lista os 5 jogos');
 clicar($('[data-accao="ir"][data-ecra="g3"]'));
-ok(MB.estado().ecra === 'g3', 'clicar no nível 3 navega para g3');
-ok($('.enunciado').textContent.includes('laranjas'), 'g3 mostra a 1ª pergunta');
-
+ok(MB.estado().ecra === 'g3', 'entrar no jogo Conta a Colheita');
 clicar($('[data-accao="voltar"]'));
-ok(MB.estado().ecra === 'home', 'botão voltar regressa ao mapa');
+ok(MB.estado().ecra === 'cat:biofab', 'voltar de um jogo regressa à SUA categoria');
+clicar($('[data-accao="voltar"]'));
+ok(MB.estado().ecra === 'home', 'voltar da categoria regressa ao menu');
+
+// categoria de matemática abre um quiz
+clicar($('[data-accao="ir-cat"][data-cat="logica"]'));
+ok(MB.estado().ecra === 'cat:logica', 'abrir categoria Lógica');
+ok($$('.jogo-card').length === 3, 'Lógica lista 3 jogos (Padrões, Adivinha, Quem é?)');
+MB.ir('home');
 
 // ------------------------------------------------------- Jogo 3 (resposta certa)
 grupo('JOGO 3 — Conta a Colheita');
@@ -219,11 +225,11 @@ const esperar = ms => new Promise(r => setTimeout(r, ms));
   ok(MB.estado().mascote.aberta, 'ao descer de nível abre a mascote');
   MB.fecharMascote();
 
-  // completar o jogo inteiro (9 acertos) -> volta ao mapa
+  // completar o jogo inteiro (9 acertos) -> volta à categoria do jogo
   MB.ir('q2');
   for (let k = 0; k < 9; k++) { clicarCerto('q2'); await esperar(k % 3 === 2 ? 1300 : 900); }
-  await esperar(500);
-  ok(MB.estado().ecra === 'home', 'completar os 3 níveis volta ao mapa');
+  await esperar(600);
+  ok(MB.estado().ecra === 'cat:div', 'completar os 3 níveis volta à categoria (cat:div)');
 
   // visuais
   grupo('QUIZ — visuais');

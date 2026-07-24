@@ -757,3 +757,71 @@ button {
 
 /* Ângulos */
 .angulo-svg { height: auto; }
+
+/* ======================================================================
+   MENU POR CATEGORIAS (home) e lista de jogos de uma categoria
+   ====================================================================== */
+.home-mascote {
+  display: flex; align-items: center; gap: 12px;
+  justify-content: center;
+  margin: 4px 16px 14px;
+  text-align: center;
+}
+
+.cats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  padding: 0 16px 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.cat-card {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 18px 8px 14px;
+  border-radius: 22px;
+  background: rgba(250, 240, 225, .92);
+  box-shadow: 0 6px 0 var(--creme-escuro);
+}
+.cat-card:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--creme-escuro); }
+.cat-icone {
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px;
+}
+.cat-nome {
+  font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 16px;
+  text-align: center; line-height: 1.1; color: var(--tinta);
+}
+.cat-n { font-size: 12.5px; font-weight: 700; color: var(--castanho); }
+
+.jogos-lista {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 6px 16px 24px;
+  max-width: 620px; margin: 0 auto;
+}
+.jogo-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: rgba(250, 240, 225, .92);
+  box-shadow: 0 5px 0 var(--creme-escuro);
+  text-align: left;
+}
+.jogo-card:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--creme-escuro); }
+.jogo-icone {
+  width: 54px; height: 54px; flex: none;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+}
+.jogo-txt { display: flex; flex-direction: column; flex: 1; gap: 2px; }
+.jogo-nome { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 18px; color: var(--tinta); }
+.jogo-sub { font-size: 13.5px; font-weight: 700; color: var(--castanho); }
+.jogo-seta { font-size: 18px; flex: none; }
+
+@media (max-width: 560px) {
+  .cats-grid { grid-template-columns: repeat(2, 1fr); }
+  .cat-icone { width: 60px; height: 60px; font-size: 30px; }
+}

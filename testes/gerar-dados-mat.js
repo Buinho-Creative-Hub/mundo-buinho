@@ -234,9 +234,69 @@ JOGOS.push({ id: 'q10', nome: 'Problemas', icone: '🧠', niveis: [
 ]});
 
 // ======================================================================
+// ---- q11 Padrões (lógica: completar padrões visuais) ----
+const pad = (seq, resposta, opcoes) => ({ visual: 'nenhum', pergunta: 'O que vem a seguir?   ' + seq + '  __', resposta, opcoes });
+JOGOS.push({ id: 'q11', nome: 'Padrões', icone: '🧩', niveis: [
+  nivel([
+    pad('🔺 🔵 🔺 🔵 🔺', '🔵', ['🔵', '🔺', '🟢', '🟡']),
+    pad('🟢 🟡 🟢 🟡 🟢', '🟡', ['🟡', '🟢', '🔵', '🔴']),
+    pad('⭐ 🌙 ⭐ 🌙 ⭐', '🌙', ['🌙', '⭐', '☀️', '☁️'])
+  ]),
+  nivel([
+    pad('🔴 🔵 🟢 🔴 🔵 🟢 🔴', '🔵', ['🔵', '🔴', '🟢', '🟡']),
+    pad('🐶 🐱 🐭 🐶 🐱 🐭 🐶', '🐱', ['🐱', '🐶', '🐭', '🐰']),
+    pad('🟦 🟦 🟥 🟦 🟦 🟥', '🟦', ['🟦', '🟥', '🟩', '🟨'])
+  ]),
+  nivel([
+    pad('🌑 🌒 🌓 🌔', '🌕', ['🌕', '🌑', '🌘', '🌗']),
+    pad('🔺 🔺 🔵 🔺 🔺 🔵 🔺 🔺', '🔵', ['🔵', '🔺', '🟢', '🟣']),
+    pad('1️⃣ 3️⃣ 5️⃣ 7️⃣', '9️⃣', ['9️⃣', '8️⃣', '6️⃣', '🔟'])
+  ])
+]});
+
+// ---- q12 Adivinha o número (lógica: enigmas numéricos) ----
+const enig = (texto, resposta, verif) => ({ visual: 'nenhum', pergunta: texto, resposta, verif });
+JOGOS.push({ id: 'q12', nome: 'Adivinha o número', icone: '🔮', niveis: [
+  nivel([
+    enig('Penso num número. Somo-lhe 3 e dá 10. Que número é?', 7, 7),
+    enig('O dobro do número é 8. Que número é?', 4, 4),
+    enig('Tiro-lhe 5 e fica 6. Que número é?', 11, 11)
+  ]),
+  nivel([
+    enig('Somo-lhe 7 e dá 15. Que número é?', 8, 8),
+    enig('A metade dele é 9. Que número é?', 18, 18),
+    { visual: 'nenhum', pergunta: 'É par, maior que 4 e menor que 8. Que número é?', resposta: 6, opcoes: [6, 5, 7, 8] }
+  ]),
+  nivel([
+    enig('Multiplicado por 3 dá 21. Que número é?', 7, 7),
+    { visual: 'nenhum', pergunta: 'É par, maior que 20 e menor que 24. Que número é?', resposta: 22, opcoes: [22, 21, 23, 24] },
+    enig('Se lhe somar o dobro dele, dá 12. Que número é?', 4, 4)
+  ])
+]});
+
+// ---- q13 Quem é? (lógica: dedução e ordenação) ----
+const ded = (texto, resposta, opcoes) => ({ visual: 'nenhum', pergunta: texto, resposta, opcoes });
+JOGOS.push({ id: 'q13', nome: 'Quem é?', icone: '🕵️', niveis: [
+  nivel([
+    ded('O João é mais alto que a Ana. A Ana é mais alta que o Rui. Quem é o mais baixo?', 'Rui', ['Rui', 'João', 'Ana', 'ninguém']),
+    ded('A Maria é mais velha que o Tó. O Tó é mais velho que a Sara. Quem é o mais velho?', 'Maria', ['Maria', 'Tó', 'Sara', 'ninguém']),
+    ded('O gato corre mais que o cão. O cão corre mais que a tartaruga. Quem é o mais lento?', 'a tartaruga', ['a tartaruga', 'o gato', 'o cão', 'ninguém'])
+  ]),
+  nivel([
+    ded('Na fila, à frente do Pedro está a Rita e atrás do Pedro está o Nuno. Quem está no meio?', 'Pedro', ['Pedro', 'Rita', 'Nuno', 'ninguém']),
+    ded('A caixa azul é mais pesada que a verde. A verde é mais pesada que a vermelha. Qual é a mais leve?', 'a vermelha', ['a vermelha', 'a azul', 'a verde', 'são iguais']),
+    ded('Se hoje é terça-feira, que dia foi anteontem?', 'domingo', ['domingo', 'segunda', 'sábado', 'quinta'])
+  ]),
+  nivel([
+    ded('Ana, Bea e Rui: a Ana não é a mais alta nem a mais baixa; o Rui é o mais alto. Quem é o mais baixo?', 'Bea', ['Bea', 'Ana', 'Rui', 'ninguém']),
+    ded('Num saco há 3 bolas vermelhas e 1 azul. Tiras uma sem ver. Qual é mais provável?', 'vermelha', ['vermelha', 'azul', 'igual', 'nenhuma']),
+    ded('Todos os Zims são azuis. O Ploc é um Zim. Então o Ploc é...', 'azul', ['azul', 'verde', 'não se sabe', 'vermelho'])
+  ])
+]});
+
 // Verificação estrutural + escrita
 // ======================================================================
-ok(JOGOS.length === 10, 'são 10 jogos');
+ok(JOGOS.length === 13, 'são 13 jogos');
 JOGOS.forEach(j => {
   ok(j.niveis.length === 3, `${j.id} tem 3 níveis`);
   j.niveis.forEach((n, li) => ok(n.length === 3, `${j.id} nível ${li + 1} tem 3 rounds`));
@@ -245,9 +305,9 @@ JOGOS.forEach(j => {
 console.log(`\n${total} verificações, ${falhas} falha(s).`);
 if (falhas > 0) { console.error('✗ NÃO escrevi o ficheiro.'); process.exit(1); }
 
-const saida = '/* Mundo Buinho — jogos de matemática 4.º ano (10 jogos × 3 níveis × 3 rounds)\n' +
-  '   GERADO por testes/gerar-dados-mat.js — não editar à mão; toda a matemática\n' +
-  '   está verificada em código. Nível: L1 25s, L2 18s, L3 10s. Descer de nível ao perder. */\n' +
+const saida = '/* Mundo Buinho — jogos de matemática e lógica 4.º ano (13 jogos × 3 níveis × 3 rounds)\n' +
+  '   GERADO por testes/gerar-dados-mat.js — não editar à mão; tudo verificado em código.\n' +
+  '   Nível: L1 25s, L2 18s, L3 10s. Descer de nível ao perder. */\n' +
   'window.MB_JOGOS = ' + JSON.stringify(JOGOS, null, 2) + ';\n';
 fs.writeFileSync(path.join(__dirname, '..', 'static', 'js', 'dados-mat.js'), saida, 'utf8');
-console.log('✓ 10 jogos, 90 rounds — escritos em static/js/dados-mat.js');
+console.log('✓ ' + JOGOS.length + ' jogos, ' + (JOGOS.length * 9) + ' rounds — escritos em static/js/dados-mat.js');

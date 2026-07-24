@@ -24,7 +24,8 @@
   // Cada jogo: nivel 0..2, round 0..2. Ao perder, desce um nível (round=0).
   function estadoQuiz() {
     const q = {};
-    for (let i = 1; i <= 10; i++) q['q' + i] = { nivel: 0, round: 0, errado: null, aResolver: false };
+    const n = (window.MB_JOGOS && window.MB_JOGOS.length) || 13;
+    for (let i = 1; i <= n; i++) q['q' + i] = { nivel: 0, round: 0, errado: null, aResolver: false };
     return q;
   }
 

@@ -36,29 +36,44 @@
   }
 
   // ------------------------------------------------------------------ home
+  // Menu por CATEGORIAS. Cada cartão abre a lista de jogos dessa categoria.
   function vistaHome() {
-    const alturaMapa = 3160; // acomoda os 15 tiles (5 biofab + 10 matemática; último em y=3054)
-    const niveis = D.niveis.map(l => `
-      <button class="nivel" data-accao="ir" data-ecra="${l.ecra}"
-              style="left:${l.x};top:${l.y}px;--cor:${l.cor};--sombra:${l.sombra}">
-        <span class="nivel-bola" style="background:${l.cor};box-shadow:0 9px 0 ${l.sombra},0 16px 26px rgba(34,32,28,.22)">
-          ${l.icone}
-          <span class="nivel-num" style="color:${l.sombra}">${l.n}</span>
-        </span>
-        <span class="nivel-nome">${esc(l.nome)}</span>
-        <span class="nivel-tema">${esc(l.tema)}</span>
+    const cards = D.categorias.map(c => `
+      <button class="cat-card" data-accao="ir-cat" data-cat="${c.id}"
+              style="--cor:${c.cor};--sombra:${c.sombra}">
+        <span class="cat-icone" style="background:${c.cor};box-shadow:0 6px 0 ${c.sombra}">${c.icone}</span>
+        <span class="cat-nome">${esc(c.nome)}</span>
+        <span class="cat-n">${c.jogos.length} ${c.jogos.length === 1 ? 'jogo' : 'jogos'}</span>
       </button>`).join('');
 
-    return `${topo('Mundo Buinho', 'Matemática e ciência a brincar', false)}
-      <div class="mapa" style="height:${alturaMapa}px">
-        <div class="mapa-mascote">
-          <div class="mascote-bolha" style="width:76px;height:76px">
-            ${MASCOTE_SVG.replace('<svg', '<svg style="width:56px;height:56px"')}
-          </div>
-          <span class="mapa-legenda">Escolhe um jogo!</span>
+    return `${topo('Mundo Buinho', 'Escolhe uma categoria', false)}
+      <div class="home-mascote">
+        <div class="mascote-bolha" style="width:64px;height:64px">
+          ${MASCOTE_SVG.replace('<svg', '<svg style="width:48px;height:48px"')}
         </div>
-        ${niveis}
-      </div>`;
+        <span class="mapa-legenda">Em que queres treinar hoje?</span>
+      </div>
+      <div class="cats-grid">${cards}</div>`;
+  }
+
+  // ---------------------------------------------------------- categoria
+  function catPorId(id) { return D.categorias.find(c => c.id === id); }
+  function catDe(ecra) { const c = D.categorias.find(c => c.jogos.some(j => j.ecra === ecra)); return c ? c.id : null; }
+
+  function vistaCategoria(id) {
+    const c = catPorId(id);
+    if (!c) return `${topo('Categoria', '', true)}<div class="painel"><p class="enunciado">Categoria não encontrada.</p></div>`;
+    const cards = c.jogos.map(j => `
+      <button class="jogo-card" data-accao="ir" data-ecra="${j.ecra}" style="--cor:${c.cor};--sombra:${c.sombra}">
+        <span class="jogo-icone" style="background:${c.cor}">${c.icone}</span>
+        <span class="jogo-txt">
+          <span class="jogo-nome">${esc(j.nome)}</span>
+          <span class="jogo-sub">${esc(j.sub || '')}</span>
+        </span>
+        <span class="jogo-seta" style="color:${c.sombra}">▶</span>
+      </button>`).join('');
+    return `${topo(c.icone + ' ' + c.nome, c.jogos.length + (c.jogos.length === 1 ? ' jogo' : ' jogos'), true)}
+      <div class="jogos-lista">${cards}</div>`;
   }
 
   // ------------------------------------------- Jogo 1 — A Receita Certa
@@ -624,7 +639,7 @@
       MB.celebrar(fimJogo ? '🏆' : (fimNivel ? '⭐' : '✅'), fimJogo ? 'Ganhaste o jogo!' : (fimNivel ? 'Nível ' + (S.nivel + 1) + ' feito!' : 'Certo!'));
       setTimeout(() => {
         const cur = MB.estado()[gid];
-        if (fimJogo) { setTimeout(() => MB.ir('home'), 300); const p = {}; p[gid] = { nivel: 0, round: 0, errado: null, aResolver: false }; MB.set(p); return; }
+        if (fimJogo) { const cat = catDe(gid); setTimeout(() => MB.ir(cat ? 'cat:' + cat : 'home'), 400); const p = {}; p[gid] = { nivel: 0, round: 0, errado: null, aResolver: false }; MB.set(p); return; }
         let nivel = cur.nivel, round = cur.round + 1;
         if (round > 2) { nivel++; round = 0; }
         const p = {}; p[gid] = { nivel, round, errado: null, aResolver: false }; MB.set(p);
@@ -698,8 +713,11 @@
 
   function desenhar() {
     const S = MB.estado();
-    // jogos de matemática (q1..q10) usam o motor de quiz; os restantes o VISTAS.
-    const vista = ehQuiz(S.ecra) ? (() => vistaQuiz(S.ecra)) : (VISTAS[S.ecra] || vistaHome);
+    // ecrã de categoria (cat:<id>), jogo de matemática (q*), ou biofab/home (VISTAS).
+    let vista;
+    if (S.ecra.indexOf('cat:') === 0) vista = () => vistaCategoria(S.ecra.slice(4));
+    else if (ehQuiz(S.ecra)) vista = () => vistaQuiz(S.ecra);
+    else vista = VISTAS[S.ecra] || vistaHome;
 
     // O canvas guarda o desenho da criança nos seus próprios pixels, não no estado.
     // Um innerHTML cego destrói o elemento e apaga o desenho — o que acontecia
@@ -753,7 +771,14 @@
 
       switch (a) {
         case 'ir': MB.ir(el.dataset.ecra); break;
-        case 'voltar': MB.ir('home'); break;
+        case 'ir-cat': MB.ir('cat:' + el.dataset.cat); break;
+        case 'voltar': {
+          // de dentro de um jogo, o "voltar" leva à categoria do jogo; senão ao menu.
+          const e = MB.estado().ecra;
+          const cat = catDe(e);
+          MB.ir(cat ? 'cat:' + cat : 'home');
+          break;
+        }
         case 'som': MB.alternarSom(); break;
         case 'fechar-mascote': MB.fecharMascote(); break;
 
