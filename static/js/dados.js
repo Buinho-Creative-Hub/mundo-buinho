@@ -16,7 +16,13 @@
    CRONÓMETRO (L1 25s · L2 18s · L3 10s; ao perder desce um nível). Esse ficheiro
    é GERADO e verificado por testes/gerar-dados-mat.js — 90 perguntas, toda a
    matemática recomputada em código. Ancorados nas AE 4.º + programa oficial.
-   Aqui em baixo só ficam os 5 jogos de BIOFABRICAÇÃO (g1–g5) e o mapa. */
+   Aqui em baixo só ficam os 5 jogos de BIOFABRICAÇÃO (g1–g5) e o mapa.
+
+   ── MOTORES TÁCTEIS (r*, c*, f*) → static/js/dados-motores.js ───────────────
+   Reta numérica (r1–r3), Crivo (c1, c2) e Fusão para alvo (f1, f2) vivem em
+   window.MB_MOTORES_JOGOS, gerado e verificado por testes/gerar-motores.js.
+   ⚠️ Estes NÃO têm cronómetro nem despromoção — foi decisão pedagógica
+   (handoff das mecânicas + maker-neurodiversidade v3), não esquecimento. */
 
 window.MB_DADOS = {
 
@@ -81,32 +87,39 @@ window.MB_DADOS = {
   categorias: [
     { id: 'mult', nome: 'Multiplicação', icone: '✖️', cor: '#FA6415', sombra: '#b23c0a',
       jogos: [{ ecra: 'q1', nome: 'Tabuadas', sub: '× até 2 dígitos' },
-              { ecra: 'm1', nome: 'Memória da Tabuada', sub: 'casa a conta ao resultado' }] },
+              { ecra: 'm1', nome: 'Memória da Tabuada', sub: 'casa a conta ao resultado' },
+              { ecra: 'c1', nome: 'Caça aos Múltiplos', sub: 'todos os múltiplos na grelha' }] },
     { id: 'div', nome: 'Divisão', icone: '➗', cor: '#2038A6', sombra: '#16296f',
       jogos: [{ ecra: 'q2', nome: 'Dividir', sub: 'exacta e com resto' },
               { ecra: 'm2', nome: 'Memória da Divisão', sub: 'casa a conta ao resultado' }] },
     { id: 'fracoes', nome: 'Frações', icone: '🍕', cor: '#6B8F3E', sombra: '#55722f',
       jogos: [{ ecra: 'q3', nome: 'Partes de um todo', sub: 'fração de uma quantidade' },
               { ecra: 'q14', nome: 'Dominó de Frações', sub: 'encaixa o que vale o mesmo' },
-              { ecra: 'm3', nome: 'Memória das Frações', sub: 'casa frações que valem o mesmo' }] },
+              { ecra: 'm3', nome: 'Memória das Frações', sub: 'casa frações que valem o mesmo' },
+              { ecra: 'r1', nome: 'Coloca a Fração', sub: 'a reta numérica' }] },
     { id: 'decimais', nome: 'Decimais', icone: '🔢', cor: '#FA6415', sombra: '#b23c0a',
       jogos: [{ ecra: 'q4', nome: 'Vírgulas', sub: '×÷ 10 e 100, comparar' },
-              { ecra: 'q15', nome: 'Dominó Decimal', sub: '0,5 = ½ = 50%' }] },
+              { ecra: 'q15', nome: 'Dominó Decimal', sub: '0,5 = ½ = 50%' },
+              { ecra: 'r2', nome: 'Coloca o Decimal', sub: 'a vírgula na reta' }] },
     { id: 'dinheiro', nome: 'Dinheiro', icone: '🪙', cor: '#2038A6', sombra: '#16296f',
       jogos: [{ ecra: 'q5', nome: 'Euros e trocos', sub: 'somar preços, troco' }] },
     { id: 'geometria', nome: 'Geometria', icone: '📐', cor: '#6B8F3E', sombra: '#55722f',
       jogos: [{ ecra: 'q6', nome: 'Perímetro e Área', sub: 'medir a horta' },
               { ecra: 'q8', nome: 'Ângulos', sub: 'voltas e graus' }] },
     { id: 'sequencias', nome: 'Sequências', icone: '🏰', cor: '#FA6415', sombra: '#b23c0a',
-      jogos: [{ ecra: 'q7', nome: 'Padrões que crescem', sub: '×2, quadrados...' }] },
+      jogos: [{ ecra: 'q7', nome: 'Padrões que crescem', sub: '×2, quadrados...' },
+              { ecra: 'r3', nome: 'Perto ou Longe?', sub: 'arredondar à dezena/centena' }] },
     { id: 'graficos', nome: 'Gráficos', icone: '📊', cor: '#2038A6', sombra: '#16296f',
       jogos: [{ ecra: 'q9', nome: 'Ler dados', sub: 'pictograma e barras' }] },
     { id: 'logica', nome: 'Lógica', icone: '🧩', cor: '#6B8F3E', sombra: '#55722f',
       jogos: [{ ecra: 'q11', nome: 'Padrões', sub: 'o que vem a seguir' },
               { ecra: 'q12', nome: 'Adivinha o número', sub: 'pistas e enigmas' },
-              { ecra: 'q13', nome: 'Quem é?', sub: 'raciocínio e dedução' }] },
+              { ecra: 'q13', nome: 'Quem é?', sub: 'raciocínio e dedução' },
+              { ecra: 'c2', nome: 'O Crivo', sub: 'os primos até 100' }] },
     { id: 'problemas', nome: 'Problemas', icone: '🧠', cor: '#FA6415', sombra: '#b23c0a',
-      jogos: [{ ecra: 'q10', nome: 'Problemas', sub: 'vários passos' }] },
+      jogos: [{ ecra: 'q10', nome: 'Problemas', sub: 'vários passos' },
+              { ecra: 'f1', nome: 'Chega ao 24', sub: 'combina até dar 24' },
+              { ecra: 'f2', nome: 'Faz 100', sub: 'parcelas até 100 exacto' }] },
     { id: 'biofab', nome: 'Biofabricação', icone: '🌱', cor: '#6B8F3E', sombra: '#55722f',
       jogos: [{ ecra: 'g1', nome: 'A Receita Certa', sub: 'medir e pesar' },
               { ecra: 'g2', nome: 'Do Lixo ao Material', sub: 'sequência' },

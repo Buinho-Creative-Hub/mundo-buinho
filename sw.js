@@ -10,7 +10,7 @@
    - fontes/ícones/manifest -> cache primeiro (raramente mudam, carregam rápido).
    - /api/* -> nunca em cache (respostas da mascote frescas; cliente tem fallback). */
 
-const CACHE = 'mundo-buinho-v11';  // v11: motor Memória (m1/m2/m3) + dados-memoria.js 24 Jul 2026
+const CACHE = 'mundo-buinho-v12';  // v12: motores Reta/Crivo/Fusão (r*, c*, f*) 28 Jul 2026
 
 const ESTATICOS = [
   './',
@@ -20,7 +20,9 @@ const ESTATICOS = [
   './static/js/dados-mat.js',
   './static/js/dados-dominos.js',
   './static/js/dados-memoria.js',
+  './static/js/dados-motores.js',
   './static/js/nucleo.js',
+  './static/js/motores.js',
   './static/js/jogos.js',
   './static/manifest.json',
   './static/icones/icone-192.png',

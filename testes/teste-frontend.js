@@ -34,7 +34,8 @@ window.HTMLCanvasElement.prototype.toDataURL = () => 'data:image/png;base64,AAAA
 window.fetch = async () => ({ json: async () => ({ texto: 'pista de teste', fonte: 'mock' }) });
 
 // carregar os scripts pela ordem do index.html
-['static/js/dados.js', 'static/js/dados-mat.js', 'static/js/dados-dominos.js', 'static/js/dados-memoria.js', 'static/js/nucleo.js', 'static/js/jogos.js'].forEach(f => {
+['static/js/dados.js', 'static/js/dados-mat.js', 'static/js/dados-dominos.js', 'static/js/dados-memoria.js',
+ 'static/js/dados-motores.js', 'static/js/nucleo.js', 'static/js/motores.js', 'static/js/jogos.js'].forEach(f => {
   window.eval(fs.readFileSync(path.join(B, f), 'utf8'));
 });
 window.document.dispatchEvent(new window.Event('DOMContentLoaded'));
@@ -56,13 +57,23 @@ function clicar(el) {
   el.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
 }
 
+// O jsdom não faz layout: getBoundingClientRect devolve tudo a zero, e a reta
+// numérica divide pela largura da zona. Damos-lhe uma largura fixa de 300px
+// para o cálculo de posição poder ser testado — é geometria, não pintura.
+window.Element.prototype.getBoundingClientRect = function () {
+  return { left: 0, top: 0, right: 300, bottom: 130, width: 300, height: 130, x: 0, y: 0 };
+};
+function clicarEm(el, x) {
+  el.dispatchEvent(new window.MouseEvent('click', { bubbles: true, clientX: x, clientY: 60 }));
+}
+
 // ---------------------------------------------------------------- arranque
 grupo('ARRANQUE');
 ok($('#app').innerHTML.length > 500, 'render inicial produz HTML');
 ok(MB.estado().ecra === 'home', 'ecrã inicial é home');
 ok($$('.cat-card').length === D.categorias.length, 'home mostra ' + D.categorias.length + ' categorias (tem ' + $$('.cat-card').length + ')');
 ok(window.MB_JOGOS && window.MB_JOGOS.length === 15, 'há 15 jogos em MB_JOGOS (13 mat./lógica + 2 do motor Dominó)');
-ok(D.categorias.find(c => c.id === 'logica').jogos.length === 3, 'a categoria Lógica tem 3 jogos');
+ok(D.categorias.find(c => c.id === 'logica').jogos.length === 4, 'a categoria Lógica tem 4 jogos (+ O Crivo)');
 ok(D.categorias.find(c => c.id === 'geometria').jogos.length === 2, 'a categoria Geometria tem 2 jogos');
 
 // ---------------------------------------------------------------- navegação por categorias
@@ -80,7 +91,7 @@ ok(MB.estado().ecra === 'home', 'voltar da categoria regressa ao menu');
 // categoria de matemática abre um quiz
 clicar($('[data-accao="ir-cat"][data-cat="logica"]'));
 ok(MB.estado().ecra === 'cat:logica', 'abrir categoria Lógica');
-ok($$('.jogo-card').length === 3, 'Lógica lista 3 jogos (Padrões, Adivinha, Quem é?)');
+ok($$('.jogo-card').length === 4, 'Lógica lista 4 jogos (Padrões, Adivinha, Quem é?, O Crivo)');
 MB.ir('home');
 
 // ------------------------------------------------------- Jogo 3 (resposta certa)
@@ -313,6 +324,92 @@ const esperar = ms => new Promise(r => setTimeout(r, ms));
   await esperar(400);
   ok(esgotou, 'o cronómetro chama aoEsgotar quando o tempo acaba');
   MB.pararTimer();
+
+
+  // ==================================================================
+  // MOTORES TÁCTEIS — reta (r*), crivo (c*), fusão (f*)
+  // O que estes testes protegem é o GATE PEDAGÓGICO: sem cronómetro,
+  // sem despromoção, errar dá dica e deixa repetir. Se alguém um dia
+  // voltar a pôr o relógio nestes ecrãs, isto falha aqui e não na escola.
+  // ==================================================================
+  grupo('MOTORES TÁCTEIS — registo e contrato');
+  ok(!!window.MB_MOTOR, 'motores.js regista-se em window.MB_MOTOR');
+  ok((window.MB_MOTORES_JOGOS || []).length === 7, '7 jogos novos nos dados dos motores');
+  ok(window.MB_MOTOR.ehMeu('r1') && !window.MB_MOTOR.ehMeu('q1'),
+     'ehMeu reconhece os seus e não rouba os dos outros');
+  ok(window.MB_MOTOR.semTimer === true, 'o motor declara-se sem cronómetro');
+  // todos os jogos dos motores têm de estar no menu, senão ninguém lá chega
+  const semMenu = window.MB_MOTORES_JOGOS
+    .filter(j => !D.categorias.some(c => c.jogos.some(x => x.ecra === j.id)))
+    .map(j => j.id);
+  ok(semMenu.length === 0, 'os 7 jogos estão no menu por categorias' +
+     (semMenu.length ? ' (fora: ' + semMenu.join(', ') + ')' : ''));
+
+  grupo('MOTOR RETA NUMÉRICA (r1)');
+  MB.ir('r1');
+  ok(MB.estado().ecra === 'r1', 'entra no r1');
+  ok(!!MB.estado().mot && !!MB.estado().mot.r1, 'r1 monta o estado ao entrar');
+  ok(!!$('.rt-zona'), 'desenha a reta');
+  ok(!$('#timer-barra'), 'r1 NÃO tem cronómetro (gate pedagógico)');
+  const r1r = window.MB_MOTORES_JOGOS.find(j => j.id === 'r1').niveis[0][0];
+
+  // toque longe do sítio certo -> erro, dica, e continua no mesmo round
+  clicarEm($('.rt-zona'), 8);
+  ok(MB.estado().mot.r1.valor != null, 'tocar na reta pousa a etiqueta');
+  clicar($('[data-accao="rt-confirmar"]'));
+  await esperar(50);
+  ok(MB.estado().mot.r1.erro === true, 'errar marca erro');
+  ok(MB.estado().mascote.aberta, 'errar abre a mascote com a dica');
+  ok(MB.estado().mot.r1.round === 0 && MB.estado().mot.r1.nivel === 0,
+     'errar NÃO faz descer de nível nem saltar round');
+
+  // toque no sítio certo -> acerta e deixa seguir
+  const fracCerta = (r1r.valor - r1r.min) / (r1r.max - r1r.min);
+  clicarEm($('.rt-zona'), Math.round(fracCerta * 300));
+  clicar($('[data-accao="rt-confirmar"]'));
+  ok(MB.estado().mot.r1.feito === true, 'acertar dentro da tolerância marca feito');
+  clicar($('[data-accao="mot-seguir"]'));
+  ok(MB.estado().mot.r1.round === 1, 'seguir avança de round');
+
+  grupo('MOTOR CRIVO (c2 — primos)');
+  MB.ir('c2');
+  ok(!!$('.cv-grelha'), 'desenha a grelha do crivo');
+  ok(!$('#timer-barra'), 'c2 NÃO tem cronómetro (gate pedagógico)');
+  const c2r = window.MB_MOTORES_JOGOS.find(j => j.id === 'c2').niveis[0][0];
+  const cel = n => $$('.cv-cel').find(b => +b.dataset.n === n);
+  const errado = (() => { for (let n = c2r.de; n <= c2r.ate; n++) if (c2r.certos.indexOf(n) < 0) return n; })();
+  clicar(cel(errado));
+  await esperar(50);
+  ok(MB.estado().mascote.aberta, 'tocar num errado dá dica');
+  await esperar(1000);
+  ok(MB.estado().mot.c2.tocados.indexOf(errado) < 0, 'a marca do errado apaga-se sozinha');
+  c2r.certos.forEach(n => { const b = cel(n); if (b) clicar(b); });
+  ok(MB.estado().mot.c2.feito === true, 'apanhar todos os certos fecha o round');
+
+  grupo('MOTOR FUSÃO PARA ALVO (f1 — chega ao 24)');
+  MB.ir('f1');
+  ok(!!$('.fu-pecas'), 'desenha as parcelas');
+  ok(!$('#timer-barra'), 'f1 NÃO tem cronómetro (gate pedagógico)');
+  const f1r = window.MB_MOTORES_JOGOS.find(j => j.id === 'f1').niveis[0][0];
+  ok($('[data-accao="fu-confirmar"]').hasAttribute('disabled'),
+     'confirmar está travado enquanto a soma não bate certo');
+  // procurar um subconjunto que soma o alvo (o gerador garante que existe)
+  const sub = (() => {
+    const N = f1r.numeros;
+    for (let m = 1; m < (1 << N.length); m++) {
+      let s = 0, idx = [];
+      for (let i = 0; i < N.length; i++) if (m & (1 << i)) { s += N[i]; idx.push(i); }
+      if (s === f1r.alvo) return idx;
+    }
+    return null;
+  })();
+  ok(!!sub, 'existe combinação que dá o alvo (invariante do gerador)');
+  sub.forEach(i => clicar($$('.fu-peca')[i]));
+  ok(!$('[data-accao="fu-confirmar"]').hasAttribute('disabled'),
+     'com a soma exacta o confirmar destrava');
+  clicar($('[data-accao="fu-confirmar"]'));
+  ok(MB.estado().mot.f1.feito === true, 'confirmar com a soma certa fecha o round');
+  MB.ir('home');
 
   // ---------------------------------------------------------- som
   grupo('SOM');

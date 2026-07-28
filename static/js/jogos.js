@@ -865,6 +865,13 @@
       if (!S.mem[S.ecra]) { memIniciar(S.ecra, 0); return; }   // inicia o tabuleiro e re-desenha
       vista = () => vistaMemoria(S.ecra);
     }
+    // Motores registados à parte (motores.js: reta r*, crivo c*, fusão f*).
+    // O jogos.js não sabe o que eles fazem — só pergunta "isto é teu?". É assim
+    // que um motor novo entra sem tocar nos velhos.
+    else if (window.MB_MOTOR && window.MB_MOTOR.ehMeu(S.ecra)) {
+      if (!window.MB_MOTOR.pronto(S.ecra)) { window.MB_MOTOR.iniciar(S.ecra, 0); return; }
+      vista = () => window.MB_MOTOR.vista(S.ecra);
+    }
     else vista = VISTAS[S.ecra] || vistaHome;
 
     // O canvas guarda o desenho da criança nos seus próprios pixels, não no estado.
@@ -963,6 +970,13 @@
 
         // ---- Motor Memória de pares (m1..m3)
         case 'mem-virar': memVirar(+el.dataset.idx); break;
+
+        // ---- Motores registados à parte (motores.js): reta, crivo, fusão.
+        // O switch não conhece as acções deles de propósito: quem sabe o que
+        // `rt-pousar` faz é o motor. Acrescentar um motor não mexe aqui.
+        default:
+          if (window.MB_MOTOR) window.MB_MOTOR.accao(a, el, ev);
+          break;
       }
     });
   }
